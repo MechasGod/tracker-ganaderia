@@ -1,5 +1,5 @@
-# tracker-ganaderia
-Un sistema para la gestion de fincas ganaderas 
+# EASYCOW
+Un Software de Gestión Ganadera 
 
 ## Estructura del Proyecto
 
