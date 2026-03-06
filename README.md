@@ -1,6 +1,10 @@
 # EASYCOW
 Un Software de Gestión Ganadera 
 
+<p align="center">
+<img src="https://github.com/user-attachments/assets/dabb585b-7416-4544-9b41-385a035805ef" width="40%">
+</p>
+
 ## Estructura del Proyecto
 
 Este proyecto está organizado en 3 ramas principales:
