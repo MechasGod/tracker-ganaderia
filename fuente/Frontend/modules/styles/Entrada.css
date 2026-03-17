@@ -1,0 +1,14 @@
+.input {
+    padding: 0.6rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+
+    transition: 0.3s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: aquamarine;
+    box-shadow: 0 0 5px aquamarine;
+}

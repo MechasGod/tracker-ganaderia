@@ -8,7 +8,7 @@ button {
     border-radius: 20px;
 }
 
-/* brillo que se mueve */
+
 button::before {
     content: "";
     position: absolute;
@@ -16,8 +16,8 @@ button::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
-    transition: 0.5s;
+    background: linear-gradient(90deg, transparent, blue, blue, transparent);
+    transition: 0.7s;
 }
 
 button:hover::before {

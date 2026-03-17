@@ -3,12 +3,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* altura total de la pantalla */
+    flex-direction: column;
+    height: 100vh;
     background-color: #f0f0f0;
 }
 
 
 .contenedor{
+    text-align: center;
     background-color: white;
     padding: 2rem;
     border-radius: 10px;
@@ -22,17 +24,14 @@
 
 .title {
     text-align: center;
+    display: flex;
+    margin-top: 0;
+    margin-bottom: 5rem;
+    
 }
 
 
 input {
     padding: 0.5rem;
     font-size: 1rem;
-}
-
-button {
-    padding: 0.7rem;
-    background-color: aquamarine;
-    border: none;
-    cursor: pointer;
 }
