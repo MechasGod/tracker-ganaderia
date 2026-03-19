@@ -20,8 +20,8 @@
 }
 
 .input-group label {
-    width: 600;
-    text-align: left;
+    letter-spacing: 0.5px;
+    font-weight: 600;
     font-size: 1rem;
-    margin: 0%;
+    margin: 0.2rem;
 }

@@ -1,14 +1,16 @@
 button {
     overflow: hidden;
     padding: 0.8rem;
-    background-color: rgb(20, 216, 69);
+    background-color: rgb(16, 150, 58);
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    color: wheat;
+    color: white;
+    font-weight: 600;
     font-size: 1rem;
     width: 99.4%;
+    letter-spacing: 0.5px;
 }
 button:hover {
-    background-color: rgb(15, 167, 61);
+    background-color: rgb(13, 130, 50);
 }
