@@ -1,24 +1,24 @@
-import { useState } from 'react'
 import './Login.css'
 import Boton from '../modules/boton'
 import Contenedor from '../modules/contenedor'
 import Entrada from '../modules/Entrada'
+import Logo from '../modules/Logo'
 
 function Login() {
-    //const [usuario, setUsuario] = useState("")
     return (
         <div className='container'>
-            <h1 className='title'>EASYCOW</h1>
-            <Contenedor width="14rem" height="16rem" backColor="red">
-                <h2 >Inicio de sesion</h2>
-                <Entrada texto ="Usuario" />
-                <Entrada type='password' texto="Contraseña"/>
-                <Boton color="aquamarine" hoverColor="darkgreen">
+            
+            <Contenedor width="30rem" height="25rem" backColor="red">
+                <Logo size='40px'/>
+                <h1 className='text'>EASYCOW</h1>
+                <p className='subtext'>Ingrese sus datos para continuar</p>
+                <Entrada label="Ingrese su Correo" type="email" texto ="ejemplo@correo.com" />
+                <Entrada label="Ingrese su contraseña" type='password' texto="••••••••"/>
+                <Boton>
                     Ingresar
                 </Boton>
             </Contenedor>
         </div>
-        
     )
 }
 

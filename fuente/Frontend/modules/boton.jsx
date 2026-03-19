@@ -1,12 +1,7 @@
 import './styles/Boton.css'
-function Boton ({children, color, hoverColor}){
+function Boton ({children}){
 return(
-    <button className="btn" style={
-        {
-            backgroundColor: color,
-            '--hover-color':hoverColor
-        }
-    }>
+    <button className="btn" >
         {children}
     </button>
 )
