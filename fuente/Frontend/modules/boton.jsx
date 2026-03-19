@@ -1,7 +1,9 @@
 import './styles/Boton.css'
-function Boton ({children}){
+function Boton ({children, onClick}){
 return(
-    <button className="btn" >
+    <button className="btn" 
+    onClick={onClick}
+    >
         {children}
     </button>
 )

@@ -5,7 +5,7 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <h1>hola mudo!</h1>
+    0
   )
 }
 
