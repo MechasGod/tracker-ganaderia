@@ -1,5 +1,5 @@
 import Contenedor from "../modules/contenedor"
-import './menu.css'
+import './Menu.css'
 function Menu (){
     return(
         <><div className="menu">
