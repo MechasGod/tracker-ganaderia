@@ -4,7 +4,6 @@ import {BrowserRouter, Routes, Route} from "react-router-dom"
 import Login from './Login.jsx'
 import Menu from './Menu.jsx'
 
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>

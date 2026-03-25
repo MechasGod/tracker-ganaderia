@@ -1,0 +1,62 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 3rem;
+    height: 60px;
+    background-color: white;
+    color: black;
+    border: 0.5px solid #d3d3d3;
+}
+
+.left {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+}
+
+.logo-icon {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.right {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.right a {
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    transition: opacity 0.3s;
+}
+
+.right a:hover {
+    opacity: 0.8;
+}
+
+.salir-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.salir-icono {
+    width: 20px;
+    height: 20px;
+}

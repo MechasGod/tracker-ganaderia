@@ -1,11 +1,15 @@
-import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import './App.css'
+import Navegar from '../modules/navegar'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const location = useLocation()
+  const showNavbar = location.pathname !== '/login'
 
   return (
-    0
+    <>
+      {showNavbar && <Navegar />}
+    </>
   )
 }
 

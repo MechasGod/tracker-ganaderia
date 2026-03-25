@@ -1,29 +1,39 @@
 
 *{
+    font-family: 'Inter', sans-serif;
     padding: 0%;
     margin: 0%;
 }
-.container{
+.bloque{
     display: grid;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f0f0f0;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    margin-left: 3rem;
 }
 .menu{
-    background-color: aquamarine;
     width: 100vw;
     height: 3rem;
     margin: 0%;
 }
 .contenedor{
-    text-align: center;
+    
     background-color: white;
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
     flex-direction: column;
     gap: 1rem;
     width: 300px;
     gap: 1.2rem;
+}
+.subtext {
+    margin-left: 10%;
+    text-align: left;
+    color: #6b7280;
+    margin: 0%;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
 }
