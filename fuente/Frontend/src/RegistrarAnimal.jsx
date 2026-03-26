@@ -3,7 +3,7 @@ import Navegar from "../modules/navegar"
 function RegistrarAnimal(){
     return(
         <div>
-            <Navegar/>
+            <Navegar activo="clipboard"/>
             <h1>REgistrarrrr</h1>
         </div>
         

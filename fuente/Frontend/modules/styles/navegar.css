@@ -10,6 +10,7 @@
     background-color: white;
     color: black;
     border: 0.5px solid #d3d3d3;
+    text-align: center;
 }
 
 .left {
@@ -73,6 +74,8 @@
 .eleccion{
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    text-align: center;
     cursor: pointer;
     margin-left: 0.1rem;
     padding:10px;
@@ -91,4 +94,8 @@
     border: 1px;
     border-style: solid;
     border-color: rgba(172, 172, 172, 0.589);
+}
+.eleccion.activo{
+    background-color:  rgba(172, 172, 172, 0.301);
+    border-radius: 5px;
 }

@@ -7,7 +7,7 @@ import home from '../images/home.svg'
 import clipboard from '../images/clipboard_Black.svg'
 import pulseLine from '../images/pulseLine_black.svg'
 
-function Navegar(){
+function Navegar({activo}){
     return(
         <div className="navbar">
       <div className="left">
@@ -17,21 +17,21 @@ function Navegar(){
           </span>
           <span className="title">EASYCOW</span>
         </Link>
-        <Link to="/menu" className="eleccion">
+        <Link to="/menu" className={`eleccion ${activo === "home" ? "activo" : ""}`}>
           <span className="icon">
             <img src={home} alt="home" />
           </span>
-          <span className="text">Home</span>
+          <span className="text">Inicio</span>
         </Link>
-        <Link to="/RegistroAnimal" className="eleccion">
+        <Link to="/RegistroAnimal" className={`eleccion ${activo === "clipboard" ? "activo" : ""}`}>
           <span className="icon">
             <img src={clipboard} alt="clipboard" />
           </span>
           <span className="text">Inventario</span>
         </Link>
-        <Link to="/RegistrarEnfermo" className="eleccion">
+        <Link to="/RegistrarEnfermo" className={`eleccion ${activo === "pulseLine" ? "activo" : ""}`}>
           <span className="icon">
-            <img src={pulseLine} alt="clipboard" />
+            <img src={pulseLine} alt="pulseLine" />
           </span>
           <span className="text">Control Sanitario</span>
         </Link>

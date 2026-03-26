@@ -1,0 +1,26 @@
+.atras{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.atras-link {
+    display: flex;
+    align-items: center;
+}
+
+.atras-link .image{
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.atras-text{
+    font-weight: 500;
+    font-size: 14px;
+    color: black;
+    margin: 0;
+}
+

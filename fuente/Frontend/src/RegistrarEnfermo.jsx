@@ -1,10 +1,15 @@
+import Contenedor from "../modules/contenedor"
 import Navegar from "../modules/navegar"
+import Atras from "../modules/atras"
 
 function RegistrarEnfermo(){
     return(
         <div>
-            <Navegar/>
-            <h1>REgsitrar enfermooooo</h1>
+            <Navegar activo="pulseLine"/>
+            <Atras/>
+            <Contenedor width="auto" height="auto">
+
+            </Contenedor>
         </div>
         
     )

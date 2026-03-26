@@ -1,8 +1,9 @@
 import Navegar from "../modules/navegar"
+import './ActualizarAnimal.css'
 
 function ActualizarAnimal(){
     return(
-        <div>
+        <div className="actualizaranimal">
             <Navegar/>
             <h1>Actualizarrrrr</h1>
         </div>

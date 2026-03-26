@@ -15,7 +15,7 @@ function Menu (){
     const Navigate = useNavigate()
     return(
         <div className="menu-body">
-            <Navegar />
+            <Navegar activo="home"/>
             <h1 className="titulo">Panel de control</h1>
             <p className="subtext">Gestione su finca ganadera de manera eficiente</p>
             <div className="menu-container" id="opciones">
