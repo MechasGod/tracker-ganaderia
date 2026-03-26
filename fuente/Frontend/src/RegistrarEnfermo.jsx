@@ -1,6 +1,12 @@
+import Navegar from "../modules/navegar"
+
 function RegistrarEnfermo(){
     return(
-        <h1>REgsitrar enfermooooo</h1>
+        <div>
+            <Navegar/>
+            <h1>REgsitrar enfermooooo</h1>
+        </div>
+        
     )
 }
 export default RegistrarEnfermo

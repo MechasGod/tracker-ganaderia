@@ -17,18 +17,24 @@ function Navegar(){
           </span>
           <span className="title">EASYCOW</span>
         </Link>
-        <div className="eleccion">
-          <img src={home} alt="home" />
-          <p className="text">Home</p>
-        </div>
-        <div className="eleccion">
-          <img src={clipboard} alt="clipboard" />
-          <p className="text">Inventario</p>
-        </div>
-        <div className="eleccion">
-          <img src={pulseLine} alt="pulseLine" />
-          <p className="text">Control Sanitario</p>
-        </div>
+        <Link to="/menu" className="eleccion">
+          <span className="icon">
+            <img src={home} alt="home" />
+          </span>
+          <span className="text">Home</span>
+        </Link>
+        <Link to="/RegistroAnimal" className="eleccion">
+          <span className="icon">
+            <img src={clipboard} alt="clipboard" />
+          </span>
+          <span className="text">Inventario</span>
+        </Link>
+        <Link to="/RegistrarEnfermo" className="eleccion">
+          <span className="icon">
+            <img src={pulseLine} alt="clipboard" />
+          </span>
+          <span className="text">Control Sanitario</span>
+        </Link>
       </div>
 
       <div className="right">
