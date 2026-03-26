@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 function Login() {
     const Navigate = useNavigate()
     return (
-        <div className='container'>
+        <div className='Login-container'>
             
             <Contenedor width="30rem" height="25rem" backColor="red">
                 <Logo size='40px'/>

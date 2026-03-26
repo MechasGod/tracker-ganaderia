@@ -3,6 +3,15 @@ import { createRoot } from 'react-dom/client'
 import {BrowserRouter, Routes, Route} from "react-router-dom"
 import Login from './Login.jsx'
 import Menu from './Menu.jsx'
+import RegistroAnimal from './RegistrarAnimal.jsx'
+import ActualizarAnimal from './ActualizarAnimal.jsx'
+import RegistrarEnfermo from './RegistrarEnfermo.jsx'
+import SeguimientoTratamientos from './SeguimientoTratamientos.jsx'
+import DietasSuplementos from './DietasSuplementos.jsx'
+/* Styles */
+import './styles/text.css'
+import './styles/subtext.css'
+import './styles/body.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -10,6 +19,11 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path='/' element={<Login/>}/>
         <Route path='/Menu' element={<Menu/>}/>
+        <Route path='/RegistroAnimal' element={<RegistroAnimal/>}/>
+        <Route path='/ActualizarAnimal' element={<ActualizarAnimal/>}/>
+        <Route path='/RegistrarEnfermo' element={<RegistrarEnfermo/>}/>
+        <Route path='/SeguimientoTratamientos' element={<SeguimientoTratamientos/>}/>
+        <Route path='/DietasSuplementos' element={<DietasSuplementos/>}/>
       </Routes>
     </BrowserRouter>
   </StrictMode>

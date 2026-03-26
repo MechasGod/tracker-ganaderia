@@ -1,0 +1,9 @@
+.contenedor{
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 0.5px solid #d3d3d3;
+    gap: 1rem;
+    width: 300px;
+    gap: 1.2rem;
+}

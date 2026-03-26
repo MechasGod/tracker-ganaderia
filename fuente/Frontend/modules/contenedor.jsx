@@ -1,4 +1,7 @@
+import "./styles/Contenedor.css"
+
 function Contenedor({children, width, height}){
+
     return (
         <div
         className="contenedor"

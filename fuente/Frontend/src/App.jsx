@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
-import './App.css'
+import './styles/Login.css'
+
 import Navegar from '../modules/navegar'
 
 function App() {
