@@ -70,3 +70,25 @@
     width: 20px;
     height: 20px;
 }
+.eleccion{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    margin-left: 0.1rem;
+    padding:10px;
+}
+.eleccion img{
+    width: 1.2rem;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.eleccion .text{
+    font-weight: 600;
+}
+.eleccion:hover{
+    font-weight: 800;
+    border-radius: 5px;
+    border: 1px;
+    border-style: solid;
+    border-color: rgba(172, 172, 172, 0.589);
+}

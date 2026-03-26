@@ -8,9 +8,9 @@
 .menu-container .subtext{
     margin: 0;
 }
-.menu-body .menu-container{
-    margin-left: 20%;
-    margin-right: 20%;
+.menu-container{
+    margin-left: 15%;
+    margin-right: 15%;
     margin-top: 3%;
 }
 #opciones{
@@ -59,4 +59,23 @@
 #opciones .contenedor .btn .imagenPeque img{
     width: 15px;
     margin-right:5px ;
+}
+#estadisticas .contenedor{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#estadisticas{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+}
+#estadisticas .text{
+    font-size: 2rem;
+    font-weight: 500;
+}
+#estadisticas .subtext{
+    font-size: small;
+    
 }

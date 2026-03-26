@@ -54,7 +54,7 @@ function Menu (){
                             </div>
                         </div>
                         
-                    <Boton onClick={()=>Navigate('/RegistroEnfermo')}>
+                    <Boton onClick={()=>Navigate('/RegistrarEnfermo')}>
                         <div className="imagenPeque">
                             <img src={imagenP3} alt="warning"/>
                         </div>
@@ -75,8 +75,21 @@ function Menu (){
                 </Contenedor>
             </div>
             <div className="menu-container" id="estadisticas">
-                <Contenedor width="3rem" height="5rem">
-
+                <Contenedor width="auto" height="auto">
+                    <p className="text">0</p>
+                    <p className="subtext">Total Animales</p>
+                </Contenedor>
+                <Contenedor width="auto" height="auto">
+                    <p className="text">0</p>
+                    <p className="subtext">En Tratamiento</p>
+                </Contenedor>
+                <Contenedor width="auto" height="auto">
+                    <p className="text">0</p>
+                    <p className="subtext">Actualizados (mes)</p>
+                </Contenedor>
+                <Contenedor width="auto" height="auto">
+                    <p className="text">0</p>
+                    <p className="subtext">Tasa de Salud</p>
                 </Contenedor>
             </div>
         </div>
