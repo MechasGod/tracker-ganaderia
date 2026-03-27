@@ -1,16 +1,13 @@
-button {
+.btn {
     overflow: hidden;
     padding: 0.8rem;
-    background-color: rgb(16, 150, 58);
     border: none;
     cursor: pointer;
-    border-radius: 5px;
-    color: white;
+    border-radius: 10px;
     font-weight: 600;
     font-size: 1rem;
-    width: 99.4%;
     letter-spacing: 0.5px;
 }
-button:hover {
-    background-color: rgb(13, 130, 50);
+.btn:hover {
+    background-color: var(--hover-color);
 }

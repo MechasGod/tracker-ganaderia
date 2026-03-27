@@ -16,7 +16,7 @@ function Login() {
                 <p className='subtext'>Ingrese sus datos para continuar</p>
                 <Entrada label="Ingrese su Correo" type="email" texto ="ejemplo@correo.com" />
                 <Entrada label="Ingrese su contraseña" type='password' texto="••••••••"/>
-                <Boton onClick={() => Navigate('/Menu')}>
+                <Boton color="white" backgroundColor="rgb(16, 150, 58)" hoverColor="rgb(7, 112, 40)" onClick={() => Navigate('/Menu')}>
                     Ingresar
                 </Boton>
             </Contenedor>

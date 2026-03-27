@@ -1,0 +1,12 @@
+.botonPestana{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    gap:2rem;
+}
+.botonPestana .imagen {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    margin-right:1rem ;
+}

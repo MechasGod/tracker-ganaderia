@@ -25,3 +25,13 @@
     font-size: 1rem;
     margin: 0.2rem;
 }
+.selector {
+    color: #374151;
+}
+ 
+.selector option[value=""] {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+}

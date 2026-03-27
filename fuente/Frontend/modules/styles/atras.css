@@ -1,26 +1,28 @@
-.atras{
+.atras-link{
     display: flex;
     align-items: center;
+    flex-direction: row;
     gap: 0.5rem;
     cursor: pointer;
+    gap: 1%;
+    border-style: 1px;
+    margin-left: 15%;
+    margin-right: auto;
+    margin-top: 3%;
+    margin-bottom: 2%;
 }
-
-.atras-link {
-    display: flex;
-    align-items: center;
-}
-
 .atras-link .image{
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    object-fit: contain;
+    width: 13px;
+    height: 13px;
 }
 
-.atras-text{
-    font-weight: 500;
+.atras-link .atras-text{
+    font-weight: 600;
     font-size: 14px;
+    text-decoration: none;
     color: black;
-    margin: 0;
+}
+.atras-link{
+    text-decoration: none;
 }
 

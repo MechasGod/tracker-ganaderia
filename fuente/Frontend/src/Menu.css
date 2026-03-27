@@ -1,12 +1,15 @@
 
 .menu-body .titulo{
-    margin-left: 20%;
+    margin-left: 15%;
 }
 .menu-body .subtext{
-    margin-left: 20%;
+    margin-left: 15%;
 }
 .menu-container .subtext{
     margin: 0;
+}
+.menu-container .btn{
+      width: 99.4%;
 }
 .menu-container{
     margin-left: 15%;
@@ -18,29 +21,6 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2%;
     padding: 2%;
-}
-#opciones .contenedor .opciontitle{
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-}
-#opciones .contenedor .opciontitle .imagenGrande{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    border-radius: 10px;
-    margin-right: 10px;
-}
-#GestionInventario {
-    background-color: rgba(0, 255, 255, 0.247);
-}
-#GestionEnfermo{
-    background-color: rgba(11, 180, 87, 0.336);
-}
-#opciones .contenedor .opciontitle .imagenGrande img{
-    margin: 10px;
-    width: 30px;
 }
 #opciones .contenedor .btn{
     display: flex;

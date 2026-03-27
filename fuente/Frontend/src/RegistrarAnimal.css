@@ -1,0 +1,18 @@
+
+
+.registraranimal .contenedor {
+    margin-left: 15%;
+    margin-right: 15%;
+}
+ 
+.formulario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+}
+ 
+.formulario-full {
+    grid-column: 1 / -1;
+}
+ 

@@ -22,3 +22,6 @@
     text-align: center;
     display: flex;
 }
+.Login-container .btn{
+      width: 99.4%;
+}

@@ -1,0 +1,15 @@
+.pestanatitulo{
+    display: flex;
+    justify-content: left;
+    flex-direction: row;
+    gap: 1rem;
+}
+.pestanatitulo .imagenGrande{
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    padding: 5px;
+}
+.pestanatitulo .imagenGrande img{
+    width: 40px;
+}

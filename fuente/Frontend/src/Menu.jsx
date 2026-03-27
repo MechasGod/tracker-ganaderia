@@ -11,6 +11,7 @@ import imagenP4 from '../images/pill.svg'
 import imagenP5 from '../images/apple.svg'
 import './Menu.css'
 import { useNavigate } from 'react-router-dom'
+import TituloPestana from "../modules/tituloPestana.jsx"
 function Menu (){
     const Navigate = useNavigate()
     return(
@@ -20,16 +21,12 @@ function Menu (){
             <p className="subtext">Gestione su finca ganadera de manera eficiente</p>
             <div className="menu-container" id="opciones">
                 <Contenedor width="auto" height="auto">
-                        <div className="opciontitle">
-                            <div className="imagenGrande" id="GestionInventario">
-                                <img src={imagenG1} alt="portapapeles"/>
-                            </div>
-                            <div>
-                                <p className="text">Gestión de inventario animal</p>
-                                <p className="subtext">Registre y actualice informacion de su ganado</p>
-                            </div>
-                        </div>
-                        
+                        <TituloPestana
+                            imagen={imagenG1}
+                            textoGrande="Gestión de inventario animal"
+                            textoPequeno="Registre y actualice informacion de su ganado"
+                            color="rgba(0, 255, 255, 0.247)"
+                        />
                     <Boton onClick={()=>Navigate('/RegistroAnimal')}>
                         <div className="imagenPeque">
                             <img src={imagenP1} alt="plus"/>
@@ -44,16 +41,12 @@ function Menu (){
                     </Boton>
                 </Contenedor>
                 <Contenedor width="auto" height="auto">
-                    <div className="opciontitle">
-                            <div className="imagenGrande" id="GestionEnfermo">
-                                <img src={imagenG2} alt="portapapeles"/>
-                            </div>
-                            <div>
-                                <p className="text">Gestión de inventario animal</p>
-                                <p className="subtext">Registre y actualice informacion de su ganado</p>
-                            </div>
-                        </div>
-                        
+                        <TituloPestana
+                            imagen={imagenG2}
+                            textoGrande="Control Sanitario"
+                            textoPequeno="Monitoree la salud y tratamientos del ganado"
+                            color="rgba(11, 180, 87, 0.28)"
+                        />
                     <Boton onClick={()=>Navigate('/RegistrarEnfermo')}>
                         <div className="imagenPeque">
                             <img src={imagenP3} alt="warning"/>
