@@ -1,4 +1,22 @@
-const BASE_URL = '/api';
+const RAW_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const BASE_URL = RAW_BASE_URL.replace(/\/+$/, '');
+
+function getApiUrl(endpoint, params = {}) {
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const base = BASE_URL.startsWith('http')
+        ? BASE_URL
+        : `${window.location.origin}${BASE_URL}`;
+    const url = new URL(`${base}${normalizedEndpoint}`);
+
+    Object.keys(params).forEach((key) => {
+        const value = params[key];
+        if (value !== undefined && value !== null && value !== '') {
+            url.searchParams.append(key, value);
+        }
+    });
+
+    return url.toString();
+}
 
 // Obtener token del localStorage (se guarda después del login)
 function getAuthHeaders() {
@@ -11,39 +29,62 @@ function getAuthHeaders() {
 
 // Manejo genérico de respuesta
 async function handleResponse(response) {
-    const json = await response.json();
+    const contentType = response.headers.get('content-type') || '';
+    const json = contentType.includes('application/json')
+        ? await response.json()
+        : null;
+
     if (!response.ok) {
         // El backend responde con { success: false, error: { message: "..." } }
-        const mensaje = json.error?.message || json.mensaje || 'Error del servidor';
+        const mensaje = json?.error?.message || json?.mensaje || 'Error del servidor';
         throw new Error(mensaje);
     }
-    return json;
+    return json || { success: true };
 }
 
 export async function post(endpoint, datos) {
-    const respuesta = await fetch(`${BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(datos),
-    });
-    return handleResponse(respuesta);
+    try {
+        const respuesta = await fetch(getApiUrl(endpoint), {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(datos),
+        });
+        return handleResponse(respuesta);
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('No se pudo conectar con el servidor. Verifica la URL del API o el proxy de Vite.');
+        }
+        throw error;
+    }
 }
 
 export async function put(endpoint, datos) {
-    const respuesta = await fetch(`${BASE_URL}${endpoint}`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(datos),
-    });
-    return handleResponse(respuesta);
+    try {
+        const respuesta = await fetch(getApiUrl(endpoint), {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(datos),
+        });
+        return handleResponse(respuesta);
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('No se pudo conectar con el servidor. Verifica la URL del API o el proxy de Vite.');
+        }
+        throw error;
+    }
 }
 
 export async function get(endpoint, params = {}) {
-    const url = new URL(`${BASE_URL}${endpoint}`);
-    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-    const respuesta = await fetch(url, {
-        method: 'GET',
-        headers: getAuthHeaders(),
-    });
-    return handleResponse(respuesta);
+    try {
+        const respuesta = await fetch(getApiUrl(endpoint, params), {
+            method: 'GET',
+            headers: getAuthHeaders(),
+        });
+        return handleResponse(respuesta);
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('No se pudo conectar con el servidor. Verifica la URL del API o el proxy de Vite.');
+        }
+        throw error;
+    }
 }

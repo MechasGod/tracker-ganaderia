@@ -77,7 +77,7 @@ function DietasSuplementos(){
     };
 
     const opcionesAnimales = animales.map(animal => ({
-        value: animal.id,
+        value: animal._id || animal.id,
         label: `${animal.identificacion} - ${animal.nombre || 'Sin nombre'}`
     }));
 

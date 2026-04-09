@@ -81,9 +81,19 @@ function RegistrarAnimal(){
                     <Entrada label="Nombre" texto="Ej: Luna"
                         value={campos.nombre} onChange={handleChange('nombre')} />
 
-                    <Selector label="Raza *" opciones={["Angus", "Holstein", "Simmental", "Brahman", "Hereford"]}
+                    <Selector label="Raza *" opciones={[
+                        { value: 'angus', label: 'Angus' },
+                        { value: 'holstein', label: 'Holstein' },
+                        { value: 'brahman', label: 'Brahman' },
+                        { value: 'hereford', label: 'Hereford' },
+                        { value: 'criollo', label: 'Criollo' },
+                        { value: 'mestizo', label: 'Mestizo' }
+                    ]}
                         value={campos.raza} onChange={handleChange('raza')} error={errores.raza} />
-                    <Selector label="Sexo *" opciones={["Macho", "Hembra"]}
+                    <Selector label="Sexo *" opciones={[
+                        { value: 'macho', label: 'Macho' },
+                        { value: 'hembra', label: 'Hembra' }
+                    ]}
                         value={campos.sexo} onChange={handleChange('sexo')} error={errores.sexo} />
 
                     <Entrada label="Fecha de nacimiento *" texto="dd/mm/aaaa" type="date"

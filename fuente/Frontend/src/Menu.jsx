@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { useEffect, useState } from 'react'
 import Contenedor from "../modules/contenedor.jsx"
 import Navegar from "../modules/navegar.jsx"
 import Boton from '../modules/boton.jsx'
@@ -12,8 +12,31 @@ import imagenP5 from '../images/apple.svg'
 import './Menu.css'
 import { useNavigate } from 'react-router-dom'
 import TituloPestana from "../modules/tituloPestana.jsx"
+import { get } from './api.js'
 function Menu (){
     const Navigate = useNavigate()
+    const [estadisticas, setEstadisticas] = useState({
+        totalAnimales: 0,
+        enTratamiento: 0,
+        actualizadosMes: 0,
+        tasaSalud: 0,
+    });
+
+    useEffect(() => {
+        const cargarEstadisticas = async () => {
+            try {
+                const response = await get('/dashboard/estadisticas');
+                if (response?.data) {
+                    setEstadisticas(response.data);
+                }
+            } catch (error) {
+                // Si falla, se conservan los valores por defecto para no bloquear la vista.
+            }
+        };
+
+        cargarEstadisticas();
+    }, []);
+
     return(
         <div className="menu-body">
             <Navegar activo="home"/>
@@ -69,19 +92,19 @@ function Menu (){
             </div>
             <div className="menu-container" id="estadisticas">
                 <Contenedor width="auto" height="auto">
-                    <p className="text">0</p>
+                    <p className="text">{estadisticas.totalAnimales}</p>
                     <p className="subtext">Total Animales</p>
                 </Contenedor>
                 <Contenedor width="auto" height="auto">
-                    <p className="text">0</p>
+                    <p className="text">{estadisticas.enTratamiento}</p>
                     <p className="subtext">En Tratamiento</p>
                 </Contenedor>
                 <Contenedor width="auto" height="auto">
-                    <p className="text">0</p>
+                    <p className="text">{estadisticas.actualizadosMes}</p>
                     <p className="subtext">Actualizados (mes)</p>
                 </Contenedor>
                 <Contenedor width="auto" height="auto">
-                    <p className="text">0</p>
+                    <p className="text">{estadisticas.tasaSalud}%</p>
                     <p className="subtext">Tasa de Salud</p>
                 </Contenedor>
             </div>
