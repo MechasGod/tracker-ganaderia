@@ -54,7 +54,11 @@ const animalSchema = new mongoose.Schema(
       default: "activo",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 animalSchema.index({ nombre: 1 });
