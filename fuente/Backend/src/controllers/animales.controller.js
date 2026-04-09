@@ -1,0 +1,151 @@
+const Animal = require("../models/Animal");
+const ActualizacionMensual = require("../models/ActualizacionMensual");
+const asyncHandler = require("../utils/asyncHandler");
+const AppError = require("../utils/AppError");
+const { sendSuccess, parsePagination, buildPaginationMeta } = require("../utils/http");
+const { isFutureDate, normalizeDayRange } = require("../utils/date");
+
+const createAnimal = asyncHandler(async (req, res) => {
+  const payload = {
+    identificacion: req.body.identificacion?.trim(),
+    nombre: req.body.nombre?.trim(),
+    raza: req.body.raza,
+    sexo: req.body.sexo,
+    fechaNacimiento: req.body.fechaNacimiento,
+    peso: req.body.peso,
+    color: req.body.color?.trim(),
+    procedencia: req.body.procedencia?.trim(),
+    observaciones: req.body.observaciones?.trim(),
+  };
+
+  if (!payload.identificacion || !payload.raza || !payload.sexo || !payload.fechaNacimiento || payload.peso === undefined) {
+    throw new AppError("Campos obligatorios incompletos", 400, "VALIDATION_ERROR");
+  }
+
+  if (Number(payload.peso) <= 0) {
+    throw new AppError("El peso debe ser un número positivo", 400, "VALIDATION_ERROR");
+  }
+
+  if (isFutureDate(payload.fechaNacimiento)) {
+    throw new AppError("La fecha de nacimiento no puede ser futura", 400, "VALIDATION_ERROR");
+  }
+
+  const exists = await Animal.findOne({ identificacion: payload.identificacion });
+  if (exists) {
+    throw new AppError("Error de validación", 400, "VALIDATION_ERROR", [
+      { field: "identificacion", message: "La identificación ya existe" },
+    ]);
+  }
+
+  const animal = await Animal.create(payload);
+
+  return sendSuccess(res, 201, {
+    message: "Animal registrado exitosamente",
+    data: animal,
+  });
+});
+
+const listAnimales = asyncHandler(async (req, res) => {
+  const { page, limit, skip } = parsePagination(req.query);
+  const { estado, raza, sexo, search } = req.query;
+
+  const filter = {};
+  if (estado) filter.estado = estado;
+  if (raza) filter.raza = raza;
+  if (sexo) filter.sexo = sexo;
+
+  if (search) {
+    const pattern = new RegExp(search, "i");
+    filter.$or = [{ identificacion: pattern }, { nombre: pattern }];
+  }
+
+  const [data, total] = await Promise.all([
+    Animal.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Animal.countDocuments(filter),
+  ]);
+
+  return sendSuccess(res, 200, {
+    data,
+    pagination: buildPaginationMeta(total, page, limit),
+  });
+});
+
+const getAnimalById = asyncHandler(async (req, res) => {
+  const animal = await Animal.findById(req.params.id);
+  if (!animal) {
+    throw new AppError("Animal no encontrado", 404, "NOT_FOUND");
+  }
+
+  return sendSuccess(res, 200, { data: animal });
+});
+
+const createActualizacionMensual = asyncHandler(async (req, res) => {
+  const animal = await Animal.findById(req.params.id);
+  if (!animal) {
+    throw new AppError("Animal no encontrado", 404, "NOT_FOUND");
+  }
+
+  if (animal.estado !== "activo") {
+    throw new AppError("No se puede actualizar un animal vendido o muerto", 400, "BUSINESS_RULE_ERROR");
+  }
+
+  if (req.body.peso === undefined || Number(req.body.peso) <= 0) {
+    throw new AppError("El peso es obligatorio y debe ser positivo", 400, "VALIDATION_ERROR");
+  }
+
+  const fechaRegistro = req.body.fechaRegistro || new Date();
+  if (isFutureDate(fechaRegistro)) {
+    throw new AppError("La fecha de registro no puede ser futura", 400, "VALIDATION_ERROR");
+  }
+
+  const { start, end } = normalizeDayRange(fechaRegistro);
+  const existing = await ActualizacionMensual.findOne({
+    animalId: animal._id,
+    fechaRegistro: { $gte: start, $lte: end },
+  });
+
+  if (existing) {
+    throw new AppError("Ya existe una actualización para este animal en la fecha indicada", 400, "BUSINESS_RULE_ERROR");
+  }
+
+  const actualizacion = await ActualizacionMensual.create({
+    animalId: animal._id,
+    peso: req.body.peso,
+    altura: req.body.altura,
+    condicionCorporal: req.body.condicionCorporal,
+    produccionLeche: req.body.produccionLeche,
+    estadoReproductivo: req.body.estadoReproductivo,
+    observaciones: req.body.observaciones?.trim(),
+    fechaRegistro,
+  });
+
+  return sendSuccess(res, 201, {
+    message: "Actualización registrada exitosamente",
+    data: {
+      ...actualizacion.toObject(),
+      animal: {
+        identificacion: animal.identificacion,
+        nombre: animal.nombre,
+      },
+    },
+  });
+});
+
+const listActualizaciones = asyncHandler(async (req, res) => {
+  const animal = await Animal.findById(req.params.id);
+  if (!animal) {
+    throw new AppError("Animal no encontrado", 404, "NOT_FOUND");
+  }
+
+  const data = await ActualizacionMensual.find({ animalId: animal._id }).sort({ fechaRegistro: -1 });
+
+  return sendSuccess(res, 200, { data });
+});
+
+module.exports = {
+  createAnimal,
+  listAnimales,
+  getAnimalById,
+  createActualizacionMensual,
+  listActualizaciones,
+};
