@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navegar from "../modules/navegar"
 import imagenP5 from '../images/apple.svg'
 import Atras from "../modules/atras"
@@ -9,19 +9,34 @@ import Entrada from "../modules/Entrada"
 import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './DietasSuplementos.css'
- 
+import { post, get } from './api.js'
+
 function DietasSuplementos(){
     const [toast, setToast] = useState(null);
+    const [cargando, setCargando] = useState(false);
+    const [animales, setAnimales] = useState([]);
     const [campos, setCampos] = useState({
-        animal: '', fechaRegistro: '', tipoDieta: '',
-        alimentoBase: '', cantidad: '', frecuencia: '',
-        objetivo: '', suplementos: '', observaciones: ''
+        animalId: '', fechaRegistro: '', tipoDieta: '',
+        alimentoBase: '', cantidad: '', frecuenciaAlimentacion: '',
+        objetivoDieta: '', suplementos: '', observaciones: ''
     });
     const [errores, setErrores] = useState({
-        animal: false, fechaRegistro: false, tipoDieta: false,
-        alimentoBase: false, cantidad: false, frecuencia: false, objetivo: false
+        animalId: false, fechaRegistro: false, tipoDieta: false,
+        alimentoBase: false, cantidad: false, frecuenciaAlimentacion: false, objetivoDieta: false
     });
- 
+
+    useEffect(() => {
+        const cargarAnimales = async () => {
+            try {
+                const res = await get('/animales');
+                setAnimales(res.data);
+            } catch (error) {
+                setToast({ tipo: 'error', titulo: 'Error', mensaje: 'No se pudo cargar la lista de animales' });
+            }
+        };
+        cargarAnimales();
+    }, []);
+
     const handleChange = (campo) => (e) => {
         const valor = e.target.value;
         setCampos(prev => ({ ...prev, [campo]: valor }));
@@ -29,34 +44,65 @@ function DietasSuplementos(){
             setErrores(prev => ({ ...prev, [campo]: !valor }));
         }
     };
- 
-    const handleRegistrar = () => {
+
+    const handleRegistrar = async () => {
         const nuevosErrores = {
-            animal:       !campos.animal,
-            fechaRegistro:!campos.fechaRegistro,
-            tipoDieta:    !campos.tipoDieta,
-            alimentoBase: !campos.alimentoBase,
-            cantidad:     !campos.cantidad,
-            frecuencia:   !campos.frecuencia,
-            objetivo:     !campos.objetivo,
+            animalId:       !campos.animalId,
+            fechaRegistro:  !campos.fechaRegistro,
+            tipoDieta:      !campos.tipoDieta,
+            alimentoBase:   !campos.alimentoBase,
+            cantidad:       !campos.cantidad,
+            frecuenciaAlimentacion: !campos.frecuenciaAlimentacion,
+            objetivoDieta:  !campos.objetivoDieta,
         };
         setErrores(nuevosErrores);
- 
+
         if (Object.values(nuevosErrores).some(Boolean)) {
-            setToast({
-                tipo: 'error',
-                titulo: 'Error al registrar',
-                mensaje: 'No se han ingresado los datos obligatorios.'
-            });
+            setToast({ tipo: 'error', titulo: 'Error al registrar',
+                       mensaje: 'No se han ingresado los datos obligatorios.' });
             return;
         }
-        setToast({
-            tipo: 'success',
-            titulo: 'Dieta registrada exitosamente',
-            mensaje: 'La dieta ha sido registrada en el sistema.'
-        });
+
+        setCargando(true);
+        try {
+            await post('/dietas', campos);
+            setToast({ tipo: 'success', titulo: 'Dieta registrada exitosamente',
+                       mensaje: 'La dieta ha sido registrada en el sistema.' });
+        } catch (error) {
+            setToast({ tipo: 'error', titulo: 'Error al registrar',
+                       mensaje: error.message });
+        } finally {
+            setCargando(false);
+        }
     };
- 
+
+    const opcionesAnimales = animales.map(animal => ({
+        value: animal.id,
+        label: `${animal.identificacion} - ${animal.nombre || 'Sin nombre'}`
+    }));
+
+    const opcionesTipoDieta = [
+        { value: 'pastoreo', label: 'Pastoreo' },
+        { value: 'semi_estabulado', label: 'Semi-estabulado' },
+        { value: 'estabulado', label: 'Estabulado' },
+        { value: 'especial', label: 'Dieta Especial' }
+    ];
+
+    const opcionesFrecuencia = [
+        { value: '1_vez', label: '1 vez al día' },
+        { value: '2_veces', label: '2 veces al día' },
+        { value: '3_veces', label: '3 veces al día' },
+        { value: 'continuo', label: 'Continuo' }
+    ];
+
+    const opcionesObjetivo = [
+        { value: 'mantenimiento', label: 'Mantenimiento' },
+        { value: 'engorde', label: 'Engorde' },
+        { value: 'produccion_leche', label: 'Producción de leche' },
+        { value: 'gestacion', label: 'Gestación' },
+        { value: 'recuperacion', label: 'Recuperación' }
+    ];
+
     return(
         <div className="dietassuplementos">
             <Navegar/>
@@ -68,113 +114,68 @@ function DietasSuplementos(){
                     textoPequeno="Registre la alimentacion y suplementos del ganado"
                     color="rgba(255, 115, 0, 0.25)"
                 />
- 
+
                 <div className="formulario-grid">
- 
-                    {/* Fila 1 */}
                     <div className="formulario-full">
-                        <Selector
-                            label="Animal *"
-                            opciones={["Lolita", "Lola", "LoL"]}
-                            value={campos.animal}
-                            onChange={handleChange('animal')}
-                            error={errores.animal}
-                        />
+                        <Selector label="Animal *" opciones={opcionesAnimales}
+                            value={campos.animalId} onChange={handleChange('animalId')}
+                            error={errores.animalId} />
                     </div>
- 
-                    {/* Fila 2 */}
-                    <Entrada
-                        label="Fecha de Registro *"
-                        texto="dd/mm/aaaa"
-                        type="date"
-                        value={campos.fechaRegistro}
-                        onChange={handleChange('fechaRegistro')}
-                        error={errores.fechaRegistro}
-                    />
-                    <Selector
-                        label="Tipo de Dieta *"
-                        opciones={["Pastoreo", "Semi-estabulado", "Estabulado", "Dieta Especial"]}
-                        value={campos.tipoDieta}
-                        onChange={handleChange('tipoDieta')}
-                        error={errores.tipoDieta}
-                    />
- 
-                    {/* Fila 3 */}
-                    <Entrada
-                        label="Alimento Base *"
-                        texto="Ej: Pasto estrella, concentrado"
-                        value={campos.alimentoBase}
-                        onChange={handleChange('alimentoBase')}
-                        error={errores.alimentoBase}
-                    />
-                    <Entrada
-                        label="Cantidad (kg/día) *"
-                        texto="Ej: 25"
-                        type="number"
-                        value={campos.cantidad}
-                        onChange={handleChange('cantidad')}
-                        error={errores.cantidad}
-                    />
- 
-                    {/* Fila 4 */}
-                    <Selector
-                        label="Frecuencia de Alimentación *"
-                        opciones={["1 vez al día", "2 veces al día", "3 veces al día", "Continuo"]}
-                        value={campos.frecuencia}
-                        onChange={handleChange('frecuencia')}
-                        error={errores.frecuencia}
-                    />
-                    <Selector
-                        label="Objetivo de la Dieta *"
-                        opciones={["Mantenimiento", "Engorde", "Producción de leche", "Gestación", "Recuperación"]}
-                        value={campos.objetivo}
-                        onChange={handleChange('objetivo')}
-                        error={errores.objetivo}
-                    />
- 
-                    {/* Fila 5 */}
+
+                    <Entrada label="Fecha de Registro *" type="date"
+                        value={campos.fechaRegistro} onChange={handleChange('fechaRegistro')}
+                        error={errores.fechaRegistro} />
+                    <Selector label="Tipo de Dieta *"
+                        opciones={opcionesTipoDieta}
+                        value={campos.tipoDieta} onChange={handleChange('tipoDieta')}
+                        error={errores.tipoDieta} />
+
+                    <Entrada label="Alimento Base *" texto="Ej: Pasto estrella, concentrado"
+                        value={campos.alimentoBase} onChange={handleChange('alimentoBase')}
+                        error={errores.alimentoBase} />
+                    <Entrada label="Cantidad (kg/día) *" texto="Ej: 25" type="number"
+                        value={campos.cantidad} onChange={handleChange('cantidad')}
+                        error={errores.cantidad} />
+
+                    <Selector label="Frecuencia de Alimentación *"
+                        opciones={opcionesFrecuencia}
+                        value={campos.frecuenciaAlimentacion} onChange={handleChange('frecuenciaAlimentacion')}
+                        error={errores.frecuenciaAlimentacion} />
+                    <Selector label="Objetivo de la Dieta *"
+                        opciones={opcionesObjetivo}
+                        value={campos.objetivoDieta} onChange={handleChange('objetivoDieta')}
+                        error={errores.objetivoDieta} />
+
                     <div className="formulario-full">
-                        <Entrada
-                            label="Suplementos y Minerales"
+                        <Entrada label="Suplementos y Minerales"
                             texto="Liste los suplementos, vitamínicos, minerales, sales, etc..."
-                            value={campos.suplementos}
-                            onChange={handleChange('suplementos')}
-                        />
+                            value={campos.suplementos} onChange={handleChange('suplementos')} />
                     </div>
- 
-                    {/* Fila 6 */}
+
                     <div className="formulario-full">
-                        <Entrada
-                            label="Observaciones"
+                        <Entrada label="Observaciones"
                             texto="Preferencias alimentarias, alergias, respuesta a la dieta..."
-                            value={campos.observaciones}
-                            onChange={handleChange('observaciones')}
-                        />
+                            value={campos.observaciones} onChange={handleChange('observaciones')} />
                     </div>
- 
                 </div>
- 
+
                 <BotonPestana
-                    opcion="Registrar Dieta"
-                    imagen={imagenP5}
-                    color="white"
+                    opcion={cargando ? 'Registrando...' : 'Registrar Dieta'}
+                    imagen={imagenP5} color="white"
                     backgroundColor="rgba(255, 115, 0, 0.95)"
                     onClick={handleRegistrar}
+                    disabled={cargando}
                 />
- 
+
                 {toast && (
                     <div className="toast-wrapper">
-                        <Aviso
-                            tipo={toast.tipo}
-                            titulo={toast.titulo}
-                            mensaje={toast.mensaje}
-                            onClose={() => setToast(null)}
-                        />
+                        <Aviso tipo={toast.tipo} titulo={toast.titulo}
+                               mensaje={toast.mensaje} onClose={() => setToast(null)} />
                     </div>
                 )}
             </Contenedor>
         </div>
     )
 }
- 
+
 export default DietasSuplementos

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Atras from "../modules/atras"
 import Contenedor from "../modules/contenedor"
 import Navegar from "../modules/navegar"
@@ -9,20 +9,35 @@ import Entrada from "../modules/Entrada"
 import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './SeguimientoTratamientos.css'
- 
+import { post, get } from './api.js'
+
 function SeguimientoTratamientos(){
     const [toast, setToast] = useState(null);
+    const [cargando, setCargando] = useState(false);
+    const [animales, setAnimales] = useState([]);
     const [campos, setCampos] = useState({
-        animal: '', fechaInicio: '', medicamento: '',
+        animalId: '', fechaInicio: '', medicamento: '',
         dosis: '', frecuencia: '', duracion: '',
-        viaAdmin: '', veterinario: '', estadoTratamiento: '', observaciones: ''
+        viaAdministracion: '', veterinario: '', estadoTratamiento: '', observaciones: ''
     });
     const [errores, setErrores] = useState({
-        animal: false, fechaInicio: false, medicamento: false,
+        animalId: false, fechaInicio: false, medicamento: false,
         dosis: false, frecuencia: false, duracion: false,
-        viaAdmin: false, estadoTratamiento: false
+        viaAdministracion: false, estadoTratamiento: false
     });
- 
+
+    useEffect(() => {
+        const cargarAnimales = async () => {
+            try {
+                const res = await get('/animales');
+                setAnimales(res.data);
+            } catch (error) {
+                setToast({ tipo: 'error', titulo: 'Error', mensaje: 'No se pudo cargar la lista de animales' });
+            }
+        };
+        cargarAnimales();
+    }, []);
+
     const handleChange = (campo) => (e) => {
         const valor = e.target.value;
         setCampos(prev => ({ ...prev, [campo]: valor }));
@@ -30,35 +45,67 @@ function SeguimientoTratamientos(){
             setErrores(prev => ({ ...prev, [campo]: !valor }));
         }
     };
- 
-    const handleGuardar = () => {
+
+    const handleGuardar = async () => {
         const nuevosErrores = {
-            animal:            !campos.animal,
-            fechaInicio:       !campos.fechaInicio,
-            medicamento:       !campos.medicamento,
-            dosis:             !campos.dosis,
-            frecuencia:        !campos.frecuencia,
-            duracion:          !campos.duracion,
-            viaAdmin:          !campos.viaAdmin,
-            estadoTratamiento: !campos.estadoTratamiento,
+            animalId:         !campos.animalId,
+            fechaInicio:      !campos.fechaInicio,
+            medicamento:      !campos.medicamento,
+            dosis:            !campos.dosis,
+            frecuencia:       !campos.frecuencia,
+            duracion:         !campos.duracion,
+            viaAdministracion:!campos.viaAdministracion,
+            estadoTratamiento:!campos.estadoTratamiento,
         };
         setErrores(nuevosErrores);
- 
+
         if (Object.values(nuevosErrores).some(Boolean)) {
-            setToast({
-                tipo: 'error',
-                titulo: 'Error al guardar',
-                mensaje: 'No se han ingresado los datos obligatorios.'
-            });
+            setToast({ tipo: 'error', titulo: 'Error al guardar',
+                       mensaje: 'No se han ingresado los datos obligatorios.' });
             return;
         }
-        setToast({
-            tipo: 'success',
-            titulo: 'Tratamiento guardado exitosamente',
-            mensaje: 'El tratamiento ha sido registrado en el sistema.'
-        });
+
+        setCargando(true);
+        try {
+            await post('/tratamientos', campos);
+            setToast({ tipo: 'success', titulo: 'Tratamiento guardado exitosamente',
+                       mensaje: 'El tratamiento ha sido registrado en el sistema.' });
+        } catch (error) {
+            setToast({ tipo: 'error', titulo: 'Error al guardar',
+                       mensaje: error.message });
+        } finally {
+            setCargando(false);
+        }
     };
- 
+
+    const opcionesAnimales = animales.map(animal => ({
+        value: animal.id,
+        label: `${animal.identificacion} - ${animal.nombre || 'Sin nombre'}`
+    }));
+
+    const opcionesFrecuencia = [
+        { value: 'cada_6h', label: 'Cada 6 horas' },
+        { value: 'cada_8h', label: 'Cada 8 horas' },
+        { value: 'cada_12h', label: 'Cada 12 horas' },
+        { value: 'cada_24h', label: 'Cada 24 horas' },
+        { value: 'cada_48h', label: 'Cada 48 horas' }
+    ];
+
+    const opcionesViaAdmin = [
+        { value: 'intramuscular', label: 'Intramuscular' },
+        { value: 'intravenosa', label: 'Intravenosa' },
+        { value: 'subcutanea', label: 'Subcutánea' },
+        { value: 'oral', label: 'Oral' },
+        { value: 'topica', label: 'Tópica' }
+    ];
+
+    const opcionesEstado = [
+        { value: 'en_curso', label: 'En Curso' },
+        { value: 'completado', label: 'Completado' },
+        { value: 'suspendido', label: 'Suspendido' },
+        { value: 'actualizar', label: 'Actualizar Existente' }
+    ];
+
     return(
         <div className="seguimientotratamientos">
             <Navegar/>
@@ -70,118 +117,68 @@ function SeguimientoTratamientos(){
                     textoPequeno="Registre y actualice los tratamientos aplicados a los animales"
                     color="rgba(43, 255, 0, 0.25)"
                 />
- 
+
                 <div className="formulario-grid">
- 
-                    {/* Fila 1 */}
                     <div className="formulario-full">
-                        <Selector
-                            label="Animal en Tratamiento *"
-                            opciones={["Lolita", "Lola", "LoL"]}
-                            value={campos.animal}
-                            onChange={handleChange('animal')}
-                            error={errores.animal}
-                        />
+                        <Selector label="Animal en Tratamiento *"
+                            opciones={opcionesAnimales}
+                            value={campos.animalId} onChange={handleChange('animalId')}
+                            error={errores.animalId} />
                     </div>
- 
-                    {/* Fila 2 */}
-                    <Entrada
-                        label="Fecha de Inicio *"
-                        texto="dd/mm/aaaa"
-                        type="date"
-                        value={campos.fechaInicio}
-                        onChange={handleChange('fechaInicio')}
-                        error={errores.fechaInicio}
-                    />
-                    <Entrada
-                        label="Medicamento *"
-                        texto="Ej: Penicilina G"
-                        value={campos.medicamento}
-                        onChange={handleChange('medicamento')}
-                        error={errores.medicamento}
-                    />
- 
-                    {/* Fila 3 */}
-                    <Entrada
-                        label="Dosis *"
-                        texto="Ej: 10 ml"
-                        value={campos.dosis}
-                        onChange={handleChange('dosis')}
-                        error={errores.dosis}
-                    />
-                    <Selector
-                        label="Frecuencia *"
-                        opciones={["Cada 6 horas", "Cada 8 horas", "Cada 12 horas", "Cada 24 horas", "Cada 48 horas"]}
-                        value={campos.frecuencia}
-                        onChange={handleChange('frecuencia')}
-                        error={errores.frecuencia}
-                    />
- 
-                    {/* Fila 4 */}
-                    <Entrada
-                        label="Duración (días) *"
-                        texto="Ej: 7"
-                        type="number"
-                        value={campos.duracion}
-                        onChange={handleChange('duracion')}
-                        error={errores.duracion}
-                    />
-                    <Selector
-                        label="Vía de Administración *"
-                        opciones={["Intramuscular", "Intravenosa", "Subcutánea", "Oral", "Tópica"]}
-                        value={campos.viaAdmin}
-                        onChange={handleChange('viaAdmin')}
-                        error={errores.viaAdmin}
-                    />
- 
-                    {/* Fila 5 */}
-                    <Entrada
-                        label="Veterinario Responsable"
-                        texto="Nombre del veterinario"
-                        value={campos.veterinario}
-                        onChange={handleChange('veterinario')}
-                    />
-                    <Selector
-                        label="Estado del Tratamiento *"
-                        opciones={["En Curso", "Completado", "Suspendido", "Actualizar Existente"]}
-                        value={campos.estadoTratamiento}
-                        onChange={handleChange('estadoTratamiento')}
-                        error={errores.estadoTratamiento}
-                    />
- 
-                    {/* Fila 6 */}
+
+                    <Entrada label="Fecha de Inicio *" type="date"
+                        value={campos.fechaInicio} onChange={handleChange('fechaInicio')}
+                        error={errores.fechaInicio} />
+                    <Entrada label="Medicamento *" texto="Ej: Penicilina G"
+                        value={campos.medicamento} onChange={handleChange('medicamento')}
+                        error={errores.medicamento} />
+
+                    <Entrada label="Dosis *" texto="Ej: 10 ml"
+                        value={campos.dosis} onChange={handleChange('dosis')} error={errores.dosis} />
+                    <Selector label="Frecuencia *"
+                        opciones={opcionesFrecuencia}
+                        value={campos.frecuencia} onChange={handleChange('frecuencia')}
+                        error={errores.frecuencia} />
+
+                    <Entrada label="Duración (días) *" texto="Ej: 7" type="number"
+                        value={campos.duracion} onChange={handleChange('duracion')}
+                        error={errores.duracion} />
+                    <Selector label="Vía de Administración *"
+                        opciones={opcionesViaAdmin}
+                        value={campos.viaAdministracion} onChange={handleChange('viaAdministracion')}
+                        error={errores.viaAdministracion} />
+
+                    <Entrada label="Veterinario Responsable" texto="Nombre del veterinario"
+                        value={campos.veterinario} onChange={handleChange('veterinario')} />
+                    <Selector label="Estado del Tratamiento *"
+                        opciones={opcionesEstado}
+                        value={campos.estadoTratamiento} onChange={handleChange('estadoTratamiento')}
+                        error={errores.estadoTratamiento} />
+
                     <div className="formulario-full">
-                        <Entrada
-                            label="Observaciones y Evolución"
+                        <Entrada label="Observaciones y Evolución"
                             texto="Efectividad del tratamiento, efectos secundarios, mejoras observadas..."
-                            value={campos.observaciones}
-                            onChange={handleChange('observaciones')}
-                        />
+                            value={campos.observaciones} onChange={handleChange('observaciones')} />
                     </div>
- 
                 </div>
- 
+
                 <BotonPestana
-                    opcion="Guardar Tratamiento"
-                    imagen={imagenP4}
-                    color="white"
+                    opcion={cargando ? 'Guardando...' : 'Guardar Tratamiento'}
+                    imagen={imagenP4} color="white"
                     backgroundColor="rgb(37, 156, 47)"
                     onClick={handleGuardar}
+                    disabled={cargando}
                 />
- 
+
                 {toast && (
                     <div className="toast-wrapper">
-                        <Aviso
-                            tipo={toast.tipo}
-                            titulo={toast.titulo}
-                            mensaje={toast.mensaje}
-                            onClose={() => setToast(null)}
-                        />
+                        <Aviso tipo={toast.tipo} titulo={toast.titulo}
+                               mensaje={toast.mensaje} onClose={() => setToast(null)} />
                     </div>
                 )}
             </Contenedor>
         </div>
     )
 }
- 
+
 export default SeguimientoTratamientos
