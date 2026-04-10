@@ -146,8 +146,8 @@ function ActualizarAnimal(){
                             error={errores.condicionCorporal} />
                         <Entrada label="Producción de leche (L/día)" texto="Ej: 18.5" type="number"
                             value={campos.produccionLeche} onChange={handleChange('produccionLeche')} />
-
-                        <Selector label="Estado reproductivo"
+                        <div className="formulario-full">
+                            <Selector label="Estado reproductivo" 
                             opciones={[
                                 { value: 'vacia', label: 'Vacía' },
                                 { value: 'gestante', label: 'Gestante' },
@@ -155,6 +155,8 @@ function ActualizarAnimal(){
                                 { value: 'servicio', label: 'Servicio' }
                             ]}
                             value={campos.estadoReproductivo} onChange={handleChange('estadoReproductivo')} />
+                        </div>
+                        
 
                         <div className="formulario-full">
                             <Entrada label="Observaciones"
