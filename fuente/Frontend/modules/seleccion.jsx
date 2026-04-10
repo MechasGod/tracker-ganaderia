@@ -5,7 +5,7 @@ function Selector({ label, opciones = [], value, onChange, error }) {
         <div className="input-group">
             <label style={{ color: error ? '#dc2626' : '' }}>{label}</label>
             <select
-                className="input"
+                className="input selector"
                 value={value}
                 onChange={onChange}
                 style={{

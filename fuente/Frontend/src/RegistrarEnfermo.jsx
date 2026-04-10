@@ -144,7 +144,7 @@ function RegistrarEnfermo(){
                 </div>
 
                 <BotonPestana
-                    opcion={cargando ? 'Registrando...' : 'Registrar'}
+                    opcion={cargando ? 'Registrando...' : 'Registrar Enfermedad'}
                     imagen={imagenP3} color="white"
                     backgroundColor="rgb(200, 50, 20)"
                     onClick={handleRegistrar}

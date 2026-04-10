@@ -29,9 +29,21 @@
     gap: 1.5rem;
     padding: 0;
 }
+
+#opciones .contenedor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+#opciones .pestanatitulo {
+    margin-bottom: 0.35rem;
+}
+
 #opciones .contenedor .btn{
     display: flex;
     flex-direction: row;
+    align-items: center;
     text-align: left;
     background-color: white;
     border-width: 1px;
@@ -54,6 +66,7 @@
     justify-content: center;
     padding-top: 1.3rem;
     padding-bottom: 1.3rem;
+    min-height: 118px;
 }
 #estadisticas{
     display: grid;

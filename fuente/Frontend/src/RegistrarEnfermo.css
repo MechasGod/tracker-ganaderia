@@ -3,12 +3,16 @@
     margin-right: auto;
     width: min(960px, calc(100% - 2rem)) !important;
 }
+
+.registrarenfermo {
+    padding-bottom: 2rem;
+}
  
 .formulario-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-    margin: 24px 0;
+    margin: 1.25rem 0 0.5rem;
 }
  
 .formulario-full {

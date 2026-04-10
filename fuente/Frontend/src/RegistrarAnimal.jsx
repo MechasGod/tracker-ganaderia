@@ -114,7 +114,7 @@ function RegistrarAnimal(){
                 </div>
 
                 <BotonPestana
-                    opcion={cargando ? 'Registrando...' : 'Registrar'}
+                    opcion={cargando ? 'Registrando...' : 'Registrar animal'}
                     imagen={imagenG1} color="white"
                     backgroundColor="rgb(15, 74, 235)"
                     onClick={handleRegistrar}
