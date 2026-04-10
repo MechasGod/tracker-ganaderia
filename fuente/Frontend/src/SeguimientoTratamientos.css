@@ -1,6 +1,7 @@
 .seguimientotratamientos .contenedor {
-    margin-left: 15%;
-    margin-right: 15%;
+    margin-left: auto;
+    margin-right: auto;
+    width: min(960px, calc(100% - 2rem)) !important;
 }
  
 .formulario-grid {
@@ -12,4 +13,10 @@
  
 .formulario-full {
     grid-column: 1 / -1;
+}
+
+@media (max-width: 860px) {
+    .formulario-grid {
+        grid-template-columns: 1fr;
+    }
 }

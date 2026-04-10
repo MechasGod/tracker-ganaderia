@@ -1,5 +1,8 @@
 .text {
     margin-top: 0;
-    margin-bottom: 0%;
+    margin-bottom: 0;
     font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    color: #111827;
 }
