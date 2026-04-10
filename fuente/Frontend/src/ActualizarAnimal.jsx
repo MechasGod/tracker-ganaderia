@@ -15,15 +15,19 @@ function ActualizarAnimal(){
     const [toast, setToast] = useState(null);
     const [cargando, setCargando] = useState(false);
     const [animales, setAnimales] = useState([]);
-    const [animalSeleccionado, setAnimalSeleccionado] = useState(null);
     const [campos, setCampos] = useState({
-        animalId: '', fechaInicio: '', medicamento: '',
-        dosis: '', frecuencia: '', duracion: '',
-        viaAdministracion: '', veterinario: '', estadoTratamiento: '', observaciones: ''
+        animalId: '',
+        peso: '',
+        altura: '',
+        condicionCorporal: '',
+        produccionLeche: '',
+        estadoReproductivo: '',
+        observaciones: ''
     });
     const [errores, setErrores] = useState({
-        fechaInicio: false, medicamento: false,
-        dosis: false, frecuencia: false, duracion: false, viaAdministracion: false
+        animalId: false,
+        peso: false,
+        condicionCorporal: false
     });
 
     // Cargar lista de animales al montar
@@ -49,22 +53,21 @@ function ActualizarAnimal(){
 
     const handleAnimalChange = (e) => {
         const animalId = e.target.value;
-        setAnimalSeleccionado(animalId);
         setCampos(prev => ({ ...prev, animalId }));
+        setErrores(prev => ({ ...prev, animalId: !animalId }));
     };
 
     const handleGuardar = async () => {
         const nuevosErrores = {
-            fechaInicio:  !campos.fechaInicio,
-            medicamento:  !campos.medicamento,
-            dosis:        !campos.dosis,
-            frecuencia:   !campos.frecuencia,
-            duracion:     !campos.duracion,
-            viaAdministracion: !campos.viaAdministracion,
+            animalId: !campos.animalId,
+            peso: !campos.peso || Number(campos.peso) <= 0,
+            condicionCorporal:
+                campos.condicionCorporal !== '' &&
+                (Number(campos.condicionCorporal) < 1 || Number(campos.condicionCorporal) > 5),
         };
         setErrores(nuevosErrores);
 
-        if (Object.values(nuevosErrores).some(Boolean) || !campos.animalId) {
+        if (Object.values(nuevosErrores).some(Boolean)) {
             setToast({ tipo: 'error', titulo: 'Error al guardar',
                        mensaje: 'No se han ingresado los datos obligatorios.' });
             return;
@@ -72,9 +75,28 @@ function ActualizarAnimal(){
 
         setCargando(true);
         try {
-            await post('/tratamientos', campos);
-            setToast({ tipo: 'success', titulo: 'Tratamiento guardado exitosamente',
-                       mensaje: `El tratamiento ha sido registrado en el sistema.` });
+            const payload = {
+                peso: Number(campos.peso),
+                ...(campos.altura !== '' && { altura: Number(campos.altura) }),
+                ...(campos.condicionCorporal !== '' && { condicionCorporal: Number(campos.condicionCorporal) }),
+                ...(campos.produccionLeche !== '' && { produccionLeche: Number(campos.produccionLeche) }),
+                ...(campos.estadoReproductivo && { estadoReproductivo: campos.estadoReproductivo }),
+                ...(campos.observaciones?.trim() && { observaciones: campos.observaciones.trim() })
+            };
+
+            await post(`/animales/${campos.animalId}/actualizacion`, payload);
+            setToast({ tipo: 'success', titulo: 'Actualización registrada exitosamente',
+                       mensaje: 'La actualización mensual ha sido guardada en el sistema.' });
+
+            setCampos({
+                animalId: '',
+                peso: '',
+                altura: '',
+                condicionCorporal: '',
+                produccionLeche: '',
+                estadoReproductivo: '',
+                observaciones: ''
+            });
         } catch (error) {
             setToast({ tipo: 'error', titulo: 'Error al guardar',
                        mensaje: error.message });
@@ -96,76 +118,53 @@ function ActualizarAnimal(){
             <Contenedor width="auto" height="auto">
                 <TituloPestana
                     imagen={imagenP2}
-                    textoGrande="Actualizar Tratamiento"
-                    textoPequeno="Seleccione un animal y registre un nuevo tratamiento"
+                    textoGrande="Actualización Mensual"
+                    textoPequeno="Seleccione un animal y registre sus datos productivos y físicos"
                     color="rgba(0, 153, 255, 0.25)"
                 />
 
                 <div className="formulario-grid">
                     <div className="formulario-full">
                         <Selector 
-                            label="Animal en Tratamiento *"
+                            label="Animal *"
                             opciones={opcionesAnimales}
                             value={campos.animalId} 
                             onChange={handleAnimalChange}
+                            error={errores.animalId}
                         />
                     </div>
 
                     {campos.animalId && (<>
-                        <Entrada label="Fecha de Inicio *" type="date"
-                            value={campos.fechaInicio} onChange={handleChange('fechaInicio')}
-                            error={errores.fechaInicio} />
-                        <Entrada label="Medicamento *" texto="Ej: Penicilina G"
-                            value={campos.medicamento} onChange={handleChange('medicamento')}
-                            error={errores.medicamento} />
+                        <Entrada label="Peso actual (kg) *" texto="Ej: 480" type="number"
+                            value={campos.peso} onChange={handleChange('peso')} error={errores.peso} />
+                        <Entrada label="Altura (cm)" texto="Ej: 145.5" type="number"
+                            value={campos.altura} onChange={handleChange('altura')} />
 
-                        <Entrada label="Dosis *" texto="Ej: 10ml"
-                            value={campos.dosis} onChange={handleChange('dosis')} error={errores.dosis} />
-                        <Selector label="Frecuencia *" 
-                            opciones={[
-                                { value: 'cada_6h', label: 'Cada 6 horas' },
-                                { value: 'cada_8h', label: 'Cada 8 horas' },
-                                { value: 'cada_12h', label: 'Cada 12 horas' },
-                                { value: 'cada_24h', label: 'Cada 24 horas' },
-                                { value: 'cada_48h', label: 'Cada 48 horas' }
-                            ]}
-                            value={campos.frecuencia} onChange={handleChange('frecuencia')}
-                            error={errores.frecuencia} />
+                        <Entrada label="Condición corporal (1 a 5)" texto="Ej: 3" type="number"
+                            value={campos.condicionCorporal}
+                            onChange={handleChange('condicionCorporal')}
+                            error={errores.condicionCorporal} />
+                        <Entrada label="Producción de leche (L/día)" texto="Ej: 18.5" type="number"
+                            value={campos.produccionLeche} onChange={handleChange('produccionLeche')} />
 
-                        <Entrada label="Duración (días) *" texto="Ej: 7" type="number"
-                            value={campos.duracion} onChange={handleChange('duracion')}
-                            error={errores.duracion} />
-                        <Selector label="Vía de Administración *" 
+                        <Selector label="Estado reproductivo"
                             opciones={[
-                                { value: 'intramuscular', label: 'Intramuscular' },
-                                { value: 'intravenosa', label: 'Intravenosa' },
-                                { value: 'subcutanea', label: 'Subcutánea' },
-                                { value: 'oral', label: 'Oral' },
-                                { value: 'topica', label: 'Tópica' }
+                                { value: 'vacia', label: 'Vacía' },
+                                { value: 'gestante', label: 'Gestante' },
+                                { value: 'lactante', label: 'Lactante' },
+                                { value: 'servicio', label: 'Servicio' }
                             ]}
-                            value={campos.viaAdministracion} onChange={handleChange('viaAdministracion')}
-                            error={errores.viaAdministracion} />
-
-                        <Entrada label="Veterinario Responsable" texto="Nombre del veterinario"
-                            value={campos.veterinario} onChange={handleChange('veterinario')} />
-                        <Selector label="Estado del Tratamiento"
-                            opciones={[
-                                { value: 'en_curso', label: 'En Curso' },
-                                { value: 'completado', label: 'Completado' },
-                                { value: 'suspendido', label: 'Suspendido' },
-                                { value: 'actualizar', label: 'Actualizar Existente' }
-                            ]}
-                            value={campos.estadoTratamiento} onChange={handleChange('estadoTratamiento')} />
+                            value={campos.estadoReproductivo} onChange={handleChange('estadoReproductivo')} />
 
                         <div className="formulario-full">
-                            <Entrada label="Observaciones y Evolución"
-                                texto="Efectividad del tratamiento, efectos secundarios, mejoras observadas..."
+                            <Entrada label="Observaciones"
+                                texto="Estado general, cambios observados, notas de seguimiento..."
                                 value={campos.observaciones} onChange={handleChange('observaciones')} />
                         </div>
 
                         <div className="formulario-full">
                             <BotonPestana
-                                opcion={cargando ? 'Guardando...' : 'Guardar Tratamiento'}
+                                opcion={cargando ? 'Guardando...' : 'Guardar Actualización'}
                                 imagen={imagenP2} color="white"
                                 backgroundColor="rgba(0, 153, 255, 0.95)"
                                 onClick={handleGuardar}

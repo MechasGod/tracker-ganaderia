@@ -56,11 +56,11 @@ function Menu (){
                         </div>
                         Regristrar Nuevo Animal
                     </Boton>
-                    <Boton onClick={()=>Navigate('/ActualizarAnimal')}>
+                    <Boton onClick={()=>Navigate('/ActualizacionMensual')}>
                         <div className="imagenPeque">
                             <img src={imagenP2} alt="reload"/>
                         </div>
-                        Actualizar Animal
+                        Actualización Mensual
                     </Boton>
                 </Contenedor>
                 <Contenedor width="auto" height="auto">
