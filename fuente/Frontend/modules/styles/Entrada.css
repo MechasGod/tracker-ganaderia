@@ -27,6 +27,7 @@
 }
 .selector {
     color: #374151;
+    width: 95%;
 }
  
 .selector option[value=""] {
