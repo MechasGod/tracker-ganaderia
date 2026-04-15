@@ -10,6 +10,7 @@ import Entrada from "../modules/Entrada"
 import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import { post } from './api.js'
+import { VALIDATION_RANGES, isFutureDate, isNumberInRange } from './formValidation.js'
 
 function RegistrarAnimal(){
     const [toast, setToast] = useState(null);
@@ -33,27 +34,41 @@ function RegistrarAnimal(){
     };
 
     const handleRegistrar = async () => {
+        const pesoValido = isNumberInRange(campos.peso, {
+            min: VALIDATION_RANGES.PESO_KG.min,
+            max: VALIDATION_RANGES.PESO_KG.max,
+        });
+        const fechaInvalida = isFutureDate(campos.fechaNacimiento);
+
         const nuevosErrores = {
             identificacion: !campos.identificacion,
             raza:           !campos.raza,
             sexo:           !campos.sexo,
-            fechaNacimiento:!campos.fechaNacimiento,
-            peso:           !campos.peso,
+            fechaNacimiento:!campos.fechaNacimiento || fechaInvalida,
+            peso:           !campos.peso || !pesoValido,
         };
         setErrores(nuevosErrores);
 
         if (Object.values(nuevosErrores).some(Boolean)) {
-            setToast({ tipo: 'error', titulo: 'Error al registrar el animal',
-                       mensaje: 'No se han ingresado los datos obligatorios.' });
+            let mensaje = 'No se han ingresado los datos obligatorios.';
+            if (fechaInvalida) {
+                mensaje = 'La fecha de nacimiento no puede ser futura.';
+            } else if (!pesoValido) {
+                mensaje = `El peso debe estar entre ${VALIDATION_RANGES.PESO_KG.min} y ${VALIDATION_RANGES.PESO_KG.max} kg.`;
+            }
+
+            setToast({ tipo: 'error', titulo: 'Error al registrar el animal', mensaje });
             return;
         }
 
         setCargando(true);
         try {
-            await post('/animales', campos);
+            await post('/animales', {
+                ...campos,
+                peso: Number(campos.peso),
+            });
             setToast({ tipo: 'success', titulo: 'Animal registrado exitosamente',
                        mensaje: `El animal ${campos.nombre || campos.identificacion} ha sido registrado en el sistema.` });
-            // Limpiar formulario opcional
         } catch (error) {
             setToast({ tipo: 'error', titulo: 'Error al registrar el animal',
                        mensaje: error.message });
@@ -100,7 +115,8 @@ function RegistrarAnimal(){
                         value={campos.fechaNacimiento} onChange={handleChange('fechaNacimiento')}
                         error={errores.fechaNacimiento} />
                     <Entrada label="Peso (kg) *" texto="Ej: 450" type="number"
-                        value={campos.peso} onChange={handleChange('peso')} error={errores.peso} />
+                        value={campos.peso} onChange={handleChange('peso')} error={errores.peso}
+                        min={VALIDATION_RANGES.PESO_KG.min} max={VALIDATION_RANGES.PESO_KG.max} step="0.1" />
 
                     <Entrada label="Color" texto="Ej: Negro con manchas blancas"
                         value={campos.color} onChange={handleChange('color')} />

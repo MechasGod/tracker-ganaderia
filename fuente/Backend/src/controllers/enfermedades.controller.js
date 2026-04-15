@@ -4,6 +4,8 @@ const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { sendSuccess, parsePagination, buildPaginationMeta } = require("../utils/http");
 const { isFutureDate } = require("../utils/date");
+const { ensureNumberInRange } = require("../utils/numberValidation");
+const { TEMPERATURA_C } = require("../constants/validationRanges");
 
 const createEnfermedad = asyncHandler(async (req, res) => {
   const { animalId, fechaDeteccion, enfermedad, sintomas, temperatura, estadoGeneral, observaciones } = req.body;
@@ -16,6 +18,15 @@ const createEnfermedad = asyncHandler(async (req, res) => {
     throw new AppError("La fecha de detección no puede ser futura", 400, "VALIDATION_ERROR");
   }
 
+  const temperaturaValidada = ensureNumberInRange({
+    value: temperatura,
+    field: "temperatura",
+    label: "La temperatura",
+    min: TEMPERATURA_C.min,
+    max: TEMPERATURA_C.max,
+    allowNull: true,
+  });
+
   const animal = await Animal.findById(animalId);
   if (!animal) {
     throw new AppError("Animal no encontrado", 404, "NOT_FOUND");
@@ -26,7 +37,7 @@ const createEnfermedad = asyncHandler(async (req, res) => {
     fechaDeteccion,
     enfermedad,
     sintomas: sintomas.trim(),
-    temperatura,
+    temperatura: temperaturaValidada,
     estadoGeneral,
     observaciones: observaciones?.trim(),
   });

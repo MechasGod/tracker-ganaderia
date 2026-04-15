@@ -5,6 +5,8 @@ const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { sendSuccess, parsePagination, buildPaginationMeta } = require("../utils/http");
 const { isFutureDate } = require("../utils/date");
+const { ensureNumberInRange } = require("../utils/numberValidation");
+const { DURACION_TRATAMIENTO_DIAS } = require("../constants/validationRanges");
 
 const createTratamiento = asyncHandler(async (req, res) => {
   const {
@@ -25,9 +27,15 @@ const createTratamiento = asyncHandler(async (req, res) => {
     throw new AppError("Campos obligatorios incompletos", 400, "VALIDATION_ERROR");
   }
 
-  if (Number(duracion) <= 0) {
-    throw new AppError("La duración debe ser un entero positivo", 400, "VALIDATION_ERROR");
-  }
+  const duracionValidada = ensureNumberInRange({
+    value: duracion,
+    field: "duracion",
+    label: "La duración",
+    min: DURACION_TRATAMIENTO_DIAS.min,
+    max: DURACION_TRATAMIENTO_DIAS.max,
+    required: true,
+    integer: true,
+  });
 
   if (isFutureDate(fechaInicio)) {
     throw new AppError("La fecha de inicio no puede ser futura", 400, "VALIDATION_ERROR");
@@ -58,7 +66,7 @@ const createTratamiento = asyncHandler(async (req, res) => {
     medicamento: medicamento.trim(),
     dosis: dosis.trim(),
     frecuencia,
-    duracion,
+    duracion: duracionValidada,
     viaAdministracion,
     veterinario: veterinario?.trim(),
     estadoTratamiento,

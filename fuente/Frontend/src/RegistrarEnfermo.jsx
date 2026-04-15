@@ -10,6 +10,7 @@ import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './RegistrarEnfermo.css'
 import { post, get } from './api.js'
+import { VALIDATION_RANGES, isFutureDate, isNumberInRange } from './formValidation.js'
 
 function RegistrarEnfermo(){
     const [toast, setToast] = useState(null);
@@ -20,7 +21,7 @@ function RegistrarEnfermo(){
         temperatura: '', estadoGeneral: '', sintomas: '', observaciones: ''
     });
     const [errores, setErrores] = useState({
-        fechaDeteccion: false, enfermedad: false,
+        animalId: false, fechaDeteccion: false, enfermedad: false,
         temperatura: false, sintomas: false
     });
 
@@ -45,23 +46,40 @@ function RegistrarEnfermo(){
     };
 
     const handleRegistrar = async () => {
+        const fechaInvalida = isFutureDate(campos.fechaDeteccion);
+        const temperaturaValida = isNumberInRange(campos.temperatura, {
+            min: VALIDATION_RANGES.TEMPERATURA_C.min,
+            max: VALIDATION_RANGES.TEMPERATURA_C.max,
+            allowEmpty: true,
+        });
+
         const nuevosErrores = {
-            fechaDeteccion: !campos.fechaDeteccion,
-            enfermedad:     !campos.enfermedad,
-            temperatura:    !campos.temperatura,
-            sintomas:       !campos.sintomas,
+            animalId: !campos.animalId,
+            fechaDeteccion: !campos.fechaDeteccion || fechaInvalida,
+            enfermedad: !campos.enfermedad,
+            temperatura: !temperaturaValida,
+            sintomas: !campos.sintomas,
         };
         setErrores(nuevosErrores);
 
-        if (Object.values(nuevosErrores).some(Boolean) || !campos.animalId) {
-            setToast({ tipo: 'error', titulo: 'Error al registrar',
-                       mensaje: 'No se han ingresado los datos obligatorios.' });
+        if (Object.values(nuevosErrores).some(Boolean)) {
+            let mensaje = 'No se han ingresado los datos obligatorios.';
+            if (fechaInvalida) {
+                mensaje = 'La fecha de detección no puede ser futura.';
+            } else if (!temperaturaValida) {
+                mensaje = `La temperatura debe estar entre ${VALIDATION_RANGES.TEMPERATURA_C.min} y ${VALIDATION_RANGES.TEMPERATURA_C.max} °C.`;
+            }
+
+            setToast({ tipo: 'error', titulo: 'Error al registrar', mensaje });
             return;
         }
 
         setCargando(true);
         try {
-            await post('/enfermedades', campos);
+            await post('/enfermedades', {
+                ...campos,
+                ...(campos.temperatura !== '' && { temperatura: Number(campos.temperatura) }),
+            });
             setToast({ tipo: 'success', titulo: 'Registro exitoso',
                        mensaje: 'El animal enfermo ha sido registrado en el sistema.' });
         } catch (error) {
@@ -111,7 +129,8 @@ function RegistrarEnfermo(){
                     <div className="formulario-full">
                         <Selector label="Animal Afectado *"
                             opciones={opcionesAnimales}
-                            value={campos.animalId} onChange={handleChange('animalId')} />
+                            value={campos.animalId} onChange={handleChange('animalId')}
+                            error={errores.animalId} />
                     </div>
 
                     <Entrada label="Fecha de Detección *" type="date"
@@ -124,7 +143,8 @@ function RegistrarEnfermo(){
 
                     <Entrada label="Temperatura (°C)" texto="Ej: 39.5" type="number"
                         value={campos.temperatura} onChange={handleChange('temperatura')}
-                        error={errores.temperatura} />
+                        error={errores.temperatura}
+                        min={VALIDATION_RANGES.TEMPERATURA_C.min} max={VALIDATION_RANGES.TEMPERATURA_C.max} step="0.1" />
                     <Selector label="Estado General"
                         opciones={opcionesEstadoGeneral}
                         value={campos.estadoGeneral} onChange={handleChange('estadoGeneral')} />

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { TIPOS_DIETA, FRECUENCIAS_ALIMENTACION, OBJETIVOS_DIETA } = require("../constants/enums");
+const { CANTIDAD_ALIMENTO_KG_DIA } = require("../constants/validationRanges");
 
 const dietaSchema = new mongoose.Schema(
   {
@@ -25,7 +26,14 @@ const dietaSchema = new mongoose.Schema(
     cantidad: {
       type: Number,
       required: true,
-      min: 0,
+      min: [
+        CANTIDAD_ALIMENTO_KG_DIA.min,
+        `La cantidad debe ser mayor o igual a ${CANTIDAD_ALIMENTO_KG_DIA.min} kg/día`,
+      ],
+      max: [
+        CANTIDAD_ALIMENTO_KG_DIA.max,
+        `La cantidad debe ser menor o igual a ${CANTIDAD_ALIMENTO_KG_DIA.max} kg/día`,
+      ],
     },
     suplementos: {
       type: String,

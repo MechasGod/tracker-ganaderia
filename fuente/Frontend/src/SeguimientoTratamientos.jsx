@@ -10,6 +10,7 @@ import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './SeguimientoTratamientos.css'
 import { post, get } from './api.js'
+import { VALIDATION_RANGES, isFutureDate, isNumberInRange } from './formValidation.js'
 
 function SeguimientoTratamientos(){
     const [toast, setToast] = useState(null);
@@ -47,27 +48,43 @@ function SeguimientoTratamientos(){
     };
 
     const handleGuardar = async () => {
+        const fechaInvalida = isFutureDate(campos.fechaInicio);
+        const duracionValida = isNumberInRange(campos.duracion, {
+            min: VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.min,
+            max: VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.max,
+            integer: true,
+        });
+
         const nuevosErrores = {
             animalId:         !campos.animalId,
-            fechaInicio:      !campos.fechaInicio,
+            fechaInicio:      !campos.fechaInicio || fechaInvalida,
             medicamento:      !campos.medicamento,
             dosis:            !campos.dosis,
             frecuencia:       !campos.frecuencia,
-            duracion:         !campos.duracion,
+            duracion:         !campos.duracion || !duracionValida,
             viaAdministracion:!campos.viaAdministracion,
             estadoTratamiento:!campos.estadoTratamiento,
         };
         setErrores(nuevosErrores);
 
         if (Object.values(nuevosErrores).some(Boolean)) {
-            setToast({ tipo: 'error', titulo: 'Error al guardar',
-                       mensaje: 'No se han ingresado los datos obligatorios.' });
+            let mensaje = 'No se han ingresado los datos obligatorios.';
+            if (fechaInvalida) {
+                mensaje = 'La fecha de inicio no puede ser futura.';
+            } else if (!duracionValida) {
+                mensaje = `La duración debe ser un entero entre ${VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.min} y ${VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.max} días.`;
+            }
+
+            setToast({ tipo: 'error', titulo: 'Error al guardar', mensaje });
             return;
         }
 
         setCargando(true);
         try {
-            await post('/tratamientos', campos);
+            await post('/tratamientos', {
+                ...campos,
+                duracion: Number(campos.duracion),
+            });
             setToast({ tipo: 'success', titulo: 'Tratamiento guardado exitosamente',
                        mensaje: 'El tratamiento ha sido registrado en el sistema.' });
         } catch (error) {
@@ -142,7 +159,8 @@ function SeguimientoTratamientos(){
 
                     <Entrada label="Duración (días) *" texto="Ej: 7" type="number"
                         value={campos.duracion} onChange={handleChange('duracion')}
-                        error={errores.duracion} />
+                        error={errores.duracion}
+                        min={VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.min} max={VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.max} step="1" />
                     <Selector label="Vía de Administración *"
                         opciones={opcionesViaAdmin}
                         value={campos.viaAdministracion} onChange={handleChange('viaAdministracion')}

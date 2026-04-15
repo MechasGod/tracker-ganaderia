@@ -4,6 +4,8 @@ const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { sendSuccess, parsePagination, buildPaginationMeta } = require("../utils/http");
 const { isFutureDate } = require("../utils/date");
+const { ensureNumberInRange } = require("../utils/numberValidation");
+const { CANTIDAD_ALIMENTO_KG_DIA } = require("../constants/validationRanges");
 
 const createDieta = asyncHandler(async (req, res) => {
   const {
@@ -22,9 +24,14 @@ const createDieta = asyncHandler(async (req, res) => {
     throw new AppError("Campos obligatorios incompletos", 400, "VALIDATION_ERROR");
   }
 
-  if (Number(cantidad) <= 0) {
-    throw new AppError("La cantidad debe ser un número positivo", 400, "VALIDATION_ERROR");
-  }
+  const cantidadValidada = ensureNumberInRange({
+    value: cantidad,
+    field: "cantidad",
+    label: "La cantidad",
+    min: CANTIDAD_ALIMENTO_KG_DIA.min,
+    max: CANTIDAD_ALIMENTO_KG_DIA.max,
+    required: true,
+  });
 
   if (isFutureDate(fechaRegistro)) {
     throw new AppError("La fecha de registro no puede ser futura", 400, "VALIDATION_ERROR");
@@ -40,7 +47,7 @@ const createDieta = asyncHandler(async (req, res) => {
     fechaRegistro,
     tipoDieta,
     alimentoBase: alimentoBase.trim(),
-    cantidad,
+    cantidad: cantidadValidada,
     suplementos: suplementos?.trim(),
     frecuenciaAlimentacion,
     objetivoDieta,

@@ -4,6 +4,7 @@ const {
   VIAS_ADMINISTRACION,
   ESTADOS_TRATAMIENTO,
 } = require("../constants/enums");
+const { DURACION_TRATAMIENTO_DIAS } = require("../constants/validationRanges");
 
 const tratamientoSchema = new mongoose.Schema(
   {
@@ -39,7 +40,14 @@ const tratamientoSchema = new mongoose.Schema(
     duracion: {
       type: Number,
       required: true,
-      min: 1,
+      min: [
+        DURACION_TRATAMIENTO_DIAS.min,
+        `La duración debe ser mayor o igual a ${DURACION_TRATAMIENTO_DIAS.min} día(s)`,
+      ],
+      max: [
+        DURACION_TRATAMIENTO_DIAS.max,
+        `La duración debe ser menor o igual a ${DURACION_TRATAMIENTO_DIAS.max} día(s)`,
+      ],
     },
     viaAdministracion: {
       type: String,

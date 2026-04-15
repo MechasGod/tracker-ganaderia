@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { RAZAS, SEXOS, ESTADOS_ANIMAL } = require("../constants/enums");
+const { PESO_KG } = require("../constants/validationRanges");
 
 const animalSchema = new mongoose.Schema(
   {
@@ -31,7 +32,8 @@ const animalSchema = new mongoose.Schema(
     peso: {
       type: Number,
       required: true,
-      min: 0,
+      min: [PESO_KG.min, `El peso debe ser mayor o igual a ${PESO_KG.min} kg`],
+      max: [PESO_KG.max, `El peso debe ser menor o igual a ${PESO_KG.max} kg`],
     },
     color: {
       type: String,

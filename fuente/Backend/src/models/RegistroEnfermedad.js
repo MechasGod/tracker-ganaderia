@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { ENFERMEDADES, ESTADOS_GENERALES, ESTADOS_ENFERMEDAD } = require("../constants/enums");
+const { TEMPERATURA_C } = require("../constants/validationRanges");
 
 const registroEnfermedadSchema = new mongoose.Schema(
   {
@@ -24,6 +25,8 @@ const registroEnfermedadSchema = new mongoose.Schema(
     },
     temperatura: {
       type: Number,
+      min: [TEMPERATURA_C.min, `La temperatura debe ser mayor o igual a ${TEMPERATURA_C.min} °C`],
+      max: [TEMPERATURA_C.max, `La temperatura debe ser menor o igual a ${TEMPERATURA_C.max} °C`],
       default: null,
     },
     estadoGeneral: {

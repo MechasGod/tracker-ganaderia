@@ -1,6 +1,6 @@
 import './styles/Entrada.css'
  
-function Entrada({ label, texto, type = "text", value, onChange, error }) {
+function Entrada({ label, texto, type = "text", value, onChange, error, ...rest }) {
     return (
         <div className="input-group">
             <label style={{ color: error ? '#dc2626' : '' }}>{label}</label>
@@ -14,6 +14,7 @@ function Entrada({ label, texto, type = "text", value, onChange, error }) {
                     backgroundColor: error ? '#fee2e2' : '',
                     borderColor: error ? '#dc2626' : ''
                 }}
+                {...rest}
             />
         </div>
     )

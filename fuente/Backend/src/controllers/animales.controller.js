@@ -4,6 +4,13 @@ const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { sendSuccess, parsePagination, buildPaginationMeta } = require("../utils/http");
 const { isFutureDate, normalizeDayRange } = require("../utils/date");
+const { ensureNumberInRange } = require("../utils/numberValidation");
+const {
+  PESO_KG,
+  ALTURA_CM,
+  CONDICION_CORPORAL,
+  PRODUCCION_LECHE_L_DIA,
+} = require("../constants/validationRanges");
 
 const createAnimal = asyncHandler(async (req, res) => {
   const payload = {
@@ -18,13 +25,18 @@ const createAnimal = asyncHandler(async (req, res) => {
     observaciones: req.body.observaciones?.trim(),
   };
 
-  if (!payload.identificacion || !payload.raza || !payload.sexo || !payload.fechaNacimiento || payload.peso === undefined) {
+  if (!payload.identificacion || !payload.raza || !payload.sexo || !payload.fechaNacimiento) {
     throw new AppError("Campos obligatorios incompletos", 400, "VALIDATION_ERROR");
   }
 
-  if (Number(payload.peso) <= 0) {
-    throw new AppError("El peso debe ser un número positivo", 400, "VALIDATION_ERROR");
-  }
+  payload.peso = ensureNumberInRange({
+    value: payload.peso,
+    field: "peso",
+    label: "El peso",
+    min: PESO_KG.min,
+    max: PESO_KG.max,
+    required: true,
+  });
 
   if (isFutureDate(payload.fechaNacimiento)) {
     throw new AppError("La fecha de nacimiento no puede ser futura", 400, "VALIDATION_ERROR");
@@ -89,9 +101,41 @@ const createActualizacionMensual = asyncHandler(async (req, res) => {
     throw new AppError("No se puede actualizar un animal vendido o muerto", 400, "BUSINESS_RULE_ERROR");
   }
 
-  if (req.body.peso === undefined || Number(req.body.peso) <= 0) {
-    throw new AppError("El peso es obligatorio y debe ser positivo", 400, "VALIDATION_ERROR");
-  }
+  const peso = ensureNumberInRange({
+    value: req.body.peso,
+    field: "peso",
+    label: "El peso",
+    min: PESO_KG.min,
+    max: PESO_KG.max,
+    required: true,
+  });
+
+  const altura = ensureNumberInRange({
+    value: req.body.altura,
+    field: "altura",
+    label: "La altura",
+    min: ALTURA_CM.min,
+    max: ALTURA_CM.max,
+    allowNull: true,
+  });
+
+  const condicionCorporal = ensureNumberInRange({
+    value: req.body.condicionCorporal,
+    field: "condicionCorporal",
+    label: "La condición corporal",
+    min: CONDICION_CORPORAL.min,
+    max: CONDICION_CORPORAL.max,
+    allowNull: true,
+  });
+
+  const produccionLeche = ensureNumberInRange({
+    value: req.body.produccionLeche,
+    field: "produccionLeche",
+    label: "La producción de leche",
+    min: PRODUCCION_LECHE_L_DIA.min,
+    max: PRODUCCION_LECHE_L_DIA.max,
+    allowNull: true,
+  });
 
   const fechaRegistro = req.body.fechaRegistro || new Date();
   if (isFutureDate(fechaRegistro)) {
@@ -110,10 +154,10 @@ const createActualizacionMensual = asyncHandler(async (req, res) => {
 
   const actualizacion = await ActualizacionMensual.create({
     animalId: animal._id,
-    peso: req.body.peso,
-    altura: req.body.altura,
-    condicionCorporal: req.body.condicionCorporal,
-    produccionLeche: req.body.produccionLeche,
+    peso,
+    altura,
+    condicionCorporal,
+    produccionLeche,
     estadoReproductivo: req.body.estadoReproductivo,
     observaciones: req.body.observaciones?.trim(),
     fechaRegistro,

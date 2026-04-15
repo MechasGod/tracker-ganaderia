@@ -10,6 +10,7 @@ import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './ActualizarAnimal.css'
 import { post, get } from './api.js'
+import { VALIDATION_RANGES, isNumberInRange } from './formValidation.js'
 
 function ActualizarAnimal(){
     const [toast, setToast] = useState(null);
@@ -27,7 +28,9 @@ function ActualizarAnimal(){
     const [errores, setErrores] = useState({
         animalId: false,
         peso: false,
-        condicionCorporal: false
+        altura: false,
+        condicionCorporal: false,
+        produccionLeche: false,
     });
 
     // Cargar lista de animales al montar
@@ -36,7 +39,7 @@ function ActualizarAnimal(){
             try {
                 const res = await get('/animales');
                 setAnimales(res.data);
-            } catch (error) {
+            } catch {
                 setToast({ tipo: 'error', titulo: 'Error', mensaje: 'No se pudo cargar la lista de animales' });
             }
         };
@@ -58,18 +61,48 @@ function ActualizarAnimal(){
     };
 
     const handleGuardar = async () => {
+        const pesoValido = isNumberInRange(campos.peso, {
+            min: VALIDATION_RANGES.PESO_KG.min,
+            max: VALIDATION_RANGES.PESO_KG.max,
+        });
+        const alturaValida = isNumberInRange(campos.altura, {
+            min: VALIDATION_RANGES.ALTURA_CM.min,
+            max: VALIDATION_RANGES.ALTURA_CM.max,
+            allowEmpty: true,
+        });
+        const condicionValida = isNumberInRange(campos.condicionCorporal, {
+            min: VALIDATION_RANGES.CONDICION_CORPORAL.min,
+            max: VALIDATION_RANGES.CONDICION_CORPORAL.max,
+            allowEmpty: true,
+        });
+        const produccionValida = isNumberInRange(campos.produccionLeche, {
+            min: VALIDATION_RANGES.PRODUCCION_LECHE_L_DIA.min,
+            max: VALIDATION_RANGES.PRODUCCION_LECHE_L_DIA.max,
+            allowEmpty: true,
+        });
+
         const nuevosErrores = {
             animalId: !campos.animalId,
-            peso: !campos.peso || Number(campos.peso) <= 0,
-            condicionCorporal:
-                campos.condicionCorporal !== '' &&
-                (Number(campos.condicionCorporal) < 1 || Number(campos.condicionCorporal) > 5),
+            peso: !campos.peso || !pesoValido,
+            altura: !alturaValida,
+            condicionCorporal: !condicionValida,
+            produccionLeche: !produccionValida,
         };
         setErrores(nuevosErrores);
 
         if (Object.values(nuevosErrores).some(Boolean)) {
-            setToast({ tipo: 'error', titulo: 'Error al guardar',
-                       mensaje: 'No se han ingresado los datos obligatorios.' });
+            let mensaje = 'No se han ingresado los datos obligatorios.';
+            if (!pesoValido) {
+                mensaje = `El peso debe estar entre ${VALIDATION_RANGES.PESO_KG.min} y ${VALIDATION_RANGES.PESO_KG.max} kg.`;
+            } else if (!alturaValida) {
+                mensaje = `La altura debe estar entre ${VALIDATION_RANGES.ALTURA_CM.min} y ${VALIDATION_RANGES.ALTURA_CM.max} cm.`;
+            } else if (!condicionValida) {
+                mensaje = `La condición corporal debe estar entre ${VALIDATION_RANGES.CONDICION_CORPORAL.min} y ${VALIDATION_RANGES.CONDICION_CORPORAL.max}.`;
+            } else if (!produccionValida) {
+                mensaje = `La producción de leche debe estar entre ${VALIDATION_RANGES.PRODUCCION_LECHE_L_DIA.min} y ${VALIDATION_RANGES.PRODUCCION_LECHE_L_DIA.max} L/día.`;
+            }
+
+            setToast({ tipo: 'error', titulo: 'Error al guardar', mensaje });
             return;
         }
 
@@ -136,16 +169,20 @@ function ActualizarAnimal(){
 
                     {campos.animalId && (<>
                         <Entrada label="Peso actual (kg) *" texto="Ej: 480" type="number"
-                            value={campos.peso} onChange={handleChange('peso')} error={errores.peso} />
+                            value={campos.peso} onChange={handleChange('peso')} error={errores.peso}
+                            min={VALIDATION_RANGES.PESO_KG.min} max={VALIDATION_RANGES.PESO_KG.max} step="0.1" />
                         <Entrada label="Altura (cm)" texto="Ej: 145.5" type="number"
-                            value={campos.altura} onChange={handleChange('altura')} />
+                            value={campos.altura} onChange={handleChange('altura')} error={errores.altura}
+                            min={VALIDATION_RANGES.ALTURA_CM.min} max={VALIDATION_RANGES.ALTURA_CM.max} step="0.1" />
 
                         <Entrada label="Condición corporal (1 a 5)" texto="Ej: 3" type="number"
                             value={campos.condicionCorporal}
                             onChange={handleChange('condicionCorporal')}
-                            error={errores.condicionCorporal} />
+                            error={errores.condicionCorporal}
+                            min={VALIDATION_RANGES.CONDICION_CORPORAL.min} max={VALIDATION_RANGES.CONDICION_CORPORAL.max} step="0.1" />
                         <Entrada label="Producción de leche (L/día)" texto="Ej: 18.5" type="number"
-                            value={campos.produccionLeche} onChange={handleChange('produccionLeche')} />
+                            value={campos.produccionLeche} onChange={handleChange('produccionLeche')} error={errores.produccionLeche}
+                            min={VALIDATION_RANGES.PRODUCCION_LECHE_L_DIA.min} max={VALIDATION_RANGES.PRODUCCION_LECHE_L_DIA.max} step="0.1" />
                         <div className="formulario-full">
                             <Selector label="Estado reproductivo" 
                             opciones={[
