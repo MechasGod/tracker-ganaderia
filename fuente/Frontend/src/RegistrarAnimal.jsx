@@ -10,7 +10,7 @@ import Entrada from "../modules/Entrada"
 import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import { post } from './api.js'
-import { VALIDATION_RANGES, isFutureDate, isNumberInRange } from './formValidation.js'
+import { VALIDATION_RANGES, isFutureDate, isNumberInRange, isValidFreeText, hasWhitespaceIssues } from './formValidation.js'
 
 function RegistrarAnimal(){
     const [toast, setToast] = useState(null);
@@ -21,7 +21,7 @@ function RegistrarAnimal(){
         color: '', procedencia: '', observaciones: ''
     });
     const [errores, setErrores] = useState({
-        identificacion: false, raza: false,
+        identificacion: false, nombre: false, raza: false,
         sexo: false, fechaNacimiento: false, peso: false
     });
 
@@ -34,14 +34,19 @@ function RegistrarAnimal(){
     };
 
     const handleRegistrar = async () => {
+        const identificacionValida = /^\d{5}$/.test(campos.identificacion);
         const pesoValido = isNumberInRange(campos.peso, {
             min: VALIDATION_RANGES.PESO_KG.min,
             max: VALIDATION_RANGES.PESO_KG.max,
         });
-        const fechaInvalida = isFutureDate(campos.fechaNacimiento);
+        const fechaInvalida  = isFutureDate(campos.fechaNacimiento);
+        const nombreValido   = isValidFreeText(campos.nombre, { required: true });
+        const colorValido    = isValidFreeText(campos.color);
+        const procedenciaValida = isValidFreeText(campos.procedencia);
 
         const nuevosErrores = {
-            identificacion: !campos.identificacion,
+            identificacion: !identificacionValida,
+            nombre:         !nombreValido,
             raza:           !campos.raza,
             sexo:           !campos.sexo,
             fechaNacimiento:!campos.fechaNacimiento || fechaInvalida,
@@ -49,12 +54,26 @@ function RegistrarAnimal(){
         };
         setErrores(nuevosErrores);
 
-        if (Object.values(nuevosErrores).some(Boolean)) {
+        if (Object.values(nuevosErrores).some(Boolean) || !colorValido || !procedenciaValida) {
             let mensaje = 'No se han ingresado los datos obligatorios.';
-            if (fechaInvalida) {
+            if (!identificacionValida) {
+                mensaje = 'La identificación debe tener exactamente 5 números.';
+            } else if (fechaInvalida) {
                 mensaje = 'La fecha de nacimiento no puede ser futura.';
             } else if (!pesoValido) {
                 mensaje = `El peso debe estar entre ${VALIDATION_RANGES.PESO_KG.min} y ${VALIDATION_RANGES.PESO_KG.max} kg.`;
+            } else if (!nombreValido) {
+                mensaje = hasWhitespaceIssues(campos.nombre)
+                    ? 'El nombre no puede tener espacios al inicio, al final ni consecutivos.'
+                    : 'El nombre debe tener al menos 2 caracteres.'
+            } else if (!colorValido) {
+                mensaje = hasWhitespaceIssues(campos.color)
+                    ? 'El color no puede tener espacios al inicio, al final ni consecutivos.'
+                    : 'El color debe tener al menos 2 caracteres.';
+            } else if (!procedenciaValida) {
+                mensaje = hasWhitespaceIssues(campos.procedencia)
+                    ? 'La procedencia no puede tener espacios al inicio, al final ni consecutivos.'
+                    : 'La procedencia debe tener al menos 2 caracteres.';
             }
 
             setToast({ tipo: 'error', titulo: 'Error al registrar el animal', mensaje });
@@ -90,11 +109,12 @@ function RegistrarAnimal(){
                 />
 
                 <div className="formulario-grid">
-                    <Entrada label="Identificación *" texto="Ej: 001-2024"
+                    <Entrada label="Identificación *" texto="Ej: 12345"
                         value={campos.identificacion} onChange={handleChange('identificacion')}
                         error={errores.identificacion} />
-                    <Entrada label="Nombre" texto="Ej: Luna"
-                        value={campos.nombre} onChange={handleChange('nombre')} />
+                    <Entrada label="Nombre *" texto="Ej: Luna"
+                        value={campos.nombre} onChange={handleChange('nombre')}
+                        error={errores.nombre} />
 
                     <Selector label="Raza *" opciones={[
                         { value: 'angus', label: 'Angus' },

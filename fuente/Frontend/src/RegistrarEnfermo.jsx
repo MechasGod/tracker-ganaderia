@@ -10,7 +10,7 @@ import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './RegistrarEnfermo.css'
 import { post, get } from './api.js'
-import { VALIDATION_RANGES, isFutureDate, isNumberInRange } from './formValidation.js'
+import { VALIDATION_RANGES, isFutureDate, isNumberInRange, isValidFreeText, hasWhitespaceIssues } from './formValidation.js'
 
 function RegistrarEnfermo(){
     const [toast, setToast] = useState(null);
@@ -46,19 +46,20 @@ function RegistrarEnfermo(){
     };
 
     const handleRegistrar = async () => {
-        const fechaInvalida = isFutureDate(campos.fechaDeteccion);
+        const fechaInvalida    = isFutureDate(campos.fechaDeteccion);
         const temperaturaValida = isNumberInRange(campos.temperatura, {
             min: VALIDATION_RANGES.TEMPERATURA_C.min,
             max: VALIDATION_RANGES.TEMPERATURA_C.max,
             allowEmpty: true,
         });
+        const sintomasValido = isValidFreeText(campos.sintomas, { required: true });
 
         const nuevosErrores = {
-            animalId: !campos.animalId,
+            animalId:       !campos.animalId,
             fechaDeteccion: !campos.fechaDeteccion || fechaInvalida,
-            enfermedad: !campos.enfermedad,
-            temperatura: !temperaturaValida,
-            sintomas: !campos.sintomas,
+            enfermedad:     !campos.enfermedad,
+            temperatura:    !temperaturaValida,
+            sintomas:       !sintomasValido,
         };
         setErrores(nuevosErrores);
 
@@ -66,6 +67,10 @@ function RegistrarEnfermo(){
             let mensaje = 'No se han ingresado los datos obligatorios.';
             if (fechaInvalida) {
                 mensaje = 'La fecha de detección no puede ser futura.';
+            } else if (!sintomasValido) {
+                mensaje = hasWhitespaceIssues(campos.sintomas)
+                    ? 'Los síntomas no pueden tener espacios al inicio, al final ni consecutivos.'
+                    : 'Los síntomas deben tener al menos 2 caracteres.';
             } else if (!temperaturaValida) {
                 mensaje = `La temperatura debe estar entre ${VALIDATION_RANGES.TEMPERATURA_C.min} y ${VALIDATION_RANGES.TEMPERATURA_C.max} °C.`;
             }

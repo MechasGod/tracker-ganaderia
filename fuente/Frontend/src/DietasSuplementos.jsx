@@ -10,7 +10,7 @@ import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './DietasSuplementos.css'
 import { post, get } from './api.js'
-import { VALIDATION_RANGES, isFutureDate, isNumberInRange } from './formValidation.js'
+import { VALIDATION_RANGES, isFutureDate, isNumberInRange, isValidFreeText, hasWhitespaceIssues } from './formValidation.js'
 
 function DietasSuplementos(){
     const [toast, setToast] = useState(null);
@@ -51,13 +51,14 @@ function DietasSuplementos(){
             min: VALIDATION_RANGES.CANTIDAD_ALIMENTO_KG_DIA.min,
             max: VALIDATION_RANGES.CANTIDAD_ALIMENTO_KG_DIA.max,
         });
-        const fechaInvalida = isFutureDate(campos.fechaRegistro);
+        const fechaInvalida      = isFutureDate(campos.fechaRegistro);
+        const alimentoBaseValido = isValidFreeText(campos.alimentoBase, { required: true });
 
         const nuevosErrores = {
             animalId:       !campos.animalId,
             fechaRegistro:  !campos.fechaRegistro || fechaInvalida,
             tipoDieta:      !campos.tipoDieta,
-            alimentoBase:   !campos.alimentoBase,
+            alimentoBase:   !alimentoBaseValido,
             cantidad:       !campos.cantidad || !cantidadValida,
             frecuenciaAlimentacion: !campos.frecuenciaAlimentacion,
             objetivoDieta:  !campos.objetivoDieta,
@@ -68,6 +69,10 @@ function DietasSuplementos(){
             let mensaje = 'No se han ingresado los datos obligatorios.';
             if (fechaInvalida) {
                 mensaje = 'La fecha de registro no puede ser futura.';
+            } else if (!alimentoBaseValido) {
+                mensaje = hasWhitespaceIssues(campos.alimentoBase)
+                    ? 'El alimento base no puede tener espacios al inicio, al final ni consecutivos.'
+                    : 'El alimento base debe tener al menos 2 caracteres.';
             } else if (!cantidadValida) {
                 mensaje = `La cantidad debe estar entre ${VALIDATION_RANGES.CANTIDAD_ALIMENTO_KG_DIA.min} y ${VALIDATION_RANGES.CANTIDAD_ALIMENTO_KG_DIA.max} kg/día.`;
             }

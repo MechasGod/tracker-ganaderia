@@ -10,7 +10,7 @@ import Selector from "../modules/seleccion"
 import Aviso from '../modules/aviso.jsx'
 import './SeguimientoTratamientos.css'
 import { post, get } from './api.js'
-import { VALIDATION_RANGES, isFutureDate, isNumberInRange } from './formValidation.js'
+import { VALIDATION_RANGES, isFutureDate, isNumberInRange, isValidFreeText, hasWhitespaceIssues } from './formValidation.js'
 
 function SeguimientoTratamientos(){
     const [toast, setToast] = useState(null);
@@ -48,18 +48,21 @@ function SeguimientoTratamientos(){
     };
 
     const handleGuardar = async () => {
-        const fechaInvalida = isFutureDate(campos.fechaInicio);
-        const duracionValida = isNumberInRange(campos.duracion, {
+        const fechaInvalida    = isFutureDate(campos.fechaInicio);
+        const duracionValida   = isNumberInRange(campos.duracion, {
             min: VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.min,
             max: VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.max,
             integer: true,
         });
+        const medicamentoValido = isValidFreeText(campos.medicamento, { required: true });
+        const dosisValida       = isValidFreeText(campos.dosis,        { required: true });
+        const veterinarioValido = isValidFreeText(campos.veterinario);
 
         const nuevosErrores = {
             animalId:         !campos.animalId,
             fechaInicio:      !campos.fechaInicio || fechaInvalida,
-            medicamento:      !campos.medicamento,
-            dosis:            !campos.dosis,
+            medicamento:      !medicamentoValido,
+            dosis:            !dosisValida,
             frecuencia:       !campos.frecuencia,
             duracion:         !campos.duracion || !duracionValida,
             viaAdministracion:!campos.viaAdministracion,
@@ -67,10 +70,22 @@ function SeguimientoTratamientos(){
         };
         setErrores(nuevosErrores);
 
-        if (Object.values(nuevosErrores).some(Boolean)) {
+        if (Object.values(nuevosErrores).some(Boolean) || !veterinarioValido) {
             let mensaje = 'No se han ingresado los datos obligatorios.';
             if (fechaInvalida) {
                 mensaje = 'La fecha de inicio no puede ser futura.';
+            } else if (!medicamentoValido) {
+                mensaje = hasWhitespaceIssues(campos.medicamento)
+                    ? 'El medicamento no puede tener espacios al inicio, al final ni consecutivos.'
+                    : 'El medicamento debe tener al menos 2 caracteres.';
+            } else if (!dosisValida) {
+                mensaje = hasWhitespaceIssues(campos.dosis)
+                    ? 'La dosis no puede tener espacios al inicio, al final ni consecutivos.'
+                    : 'La dosis debe tener al menos 2 caracteres.';
+            } else if (!veterinarioValido) {
+                mensaje = hasWhitespaceIssues(campos.veterinario)
+                    ? 'El veterinario no puede tener espacios al inicio, al final ni consecutivos.'
+                    : 'El nombre del veterinario debe tener al menos 2 caracteres.';
             } else if (!duracionValida) {
                 mensaje = `La duración debe ser un entero entre ${VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.min} y ${VALIDATION_RANGES.DURACION_TRATAMIENTO_DIAS.max} días.`;
             }

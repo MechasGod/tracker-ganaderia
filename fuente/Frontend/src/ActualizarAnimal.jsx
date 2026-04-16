@@ -114,7 +114,7 @@ function ActualizarAnimal(){
                 ...(campos.condicionCorporal !== '' && { condicionCorporal: Number(campos.condicionCorporal) }),
                 ...(campos.produccionLeche !== '' && { produccionLeche: Number(campos.produccionLeche) }),
                 ...(campos.estadoReproductivo && { estadoReproductivo: campos.estadoReproductivo }),
-                ...(campos.observaciones?.trim() && { observaciones: campos.observaciones.trim() })
+                ...(campos.observaciones && { observaciones: campos.observaciones })
             };
 
             await post(`/animales/${campos.animalId}/actualizacion`, payload);

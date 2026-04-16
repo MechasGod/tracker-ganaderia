@@ -27,3 +27,15 @@ export function isNumberInRange(value, { min, max, integer = false, allowEmpty =
     if (max !== undefined && numericValue > max) return false;
     return true;
 }
+
+export function hasWhitespaceIssues(value) {
+    if (!value || typeof value !== 'string') return false;
+    return value !== value.trim() || /\s{2,}/.test(value);
+}
+
+export function isValidFreeText(value, { required = false, minLength = 2 } = {}) {
+    if (!value || typeof value !== 'string' || value === '') return !required;
+    if (hasWhitespaceIssues(value)) return false;
+    return value.length >= minLength;
+}
+
