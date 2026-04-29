@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import './styles/navegar.css'
 import Logo from './Logo.jsx'
 import salirSVG from '../images/salir.svg'
-import Contenedor from './contenedor.jsx'
 import home from '../images/home.svg'
 import clipboard from '../images/clipboard_Black.svg'
 import pulseLine from '../images/pulseLine_black.svg'
+import productivo from '../images/productivo.svg'
 
 function Navegar({activo}){
     return(
@@ -34,6 +34,12 @@ function Navegar({activo}){
             <img src={pulseLine} alt="pulseLine" />
           </span>
           <span className="text">Control Sanitario</span>
+        </Link>
+        <Link to="/RegistroProduccion" className={`eleccion ${activo === "productivo" ? "activo-productivo" : ""}`}>
+          <span className="icon">
+            <img src={productivo} alt="productivo" />
+          </span>
+          <span className="text">Control Productivo</span>
         </Link>
       </div>
 

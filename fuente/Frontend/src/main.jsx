@@ -8,6 +8,9 @@ import ActualizarAnimal from './ActualizarAnimal.jsx'
 import RegistrarEnfermo from './RegistrarEnfermo.jsx'
 import SeguimientoTratamientos from './SeguimientoTratamientos.jsx'
 import DietasSuplementos from './DietasSuplementos.jsx'
+import RegistroProduccion from './RegistroProduccion.jsx'
+import AnalisisProductivo from './AnalisisProductivo.jsx'
+import AnalisisRentabilidad from './AnalisisRentabilidad.jsx'
 /* Styles */
 import './styles/text.css'
 import './styles/subtext.css'
@@ -25,6 +28,9 @@ createRoot(document.getElementById('root')).render(
         <Route path='/RegistrarEnfermo' element={<RegistrarEnfermo/>}/>
         <Route path='/SeguimientoTratamientos' element={<SeguimientoTratamientos/>}/>
         <Route path='/DietasSuplementos' element={<DietasSuplementos/>}/>
+        <Route path='/RegistroProduccion' element={<RegistroProduccion/>}/>
+        <Route path='/AnalisisProductivo' element={<AnalisisProductivo/>}/>
+        <Route path='/AnalisisRentabilidad' element={<AnalisisRentabilidad/>}/>
       </Routes>
     </BrowserRouter>
   </StrictMode>

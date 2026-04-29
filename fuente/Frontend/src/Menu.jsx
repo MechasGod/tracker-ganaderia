@@ -9,6 +9,7 @@ import imagenP2 from '../images/reload.svg'
 import imagenP3 from '../images/warning.svg'
 import imagenP4 from '../images/pill.svg'
 import imagenP5 from '../images/apple.svg'
+import imagenProductivo from '../images/productivo.svg'
 import './Menu.css'
 import { useNavigate } from 'react-router-dom'
 import TituloPestana from "../modules/tituloPestana.jsx"
@@ -87,6 +88,32 @@ function Menu (){
                             <img src={imagenP5} alt="apple"/>
                         </div>
                         Dietas y Suplementos
+                    </Boton>
+                </Contenedor>
+                <Contenedor width="auto" height="auto">
+                        <TituloPestana
+                            imagen={imagenProductivo}
+                            textoGrande="Control Productivo"
+                            textoPequeno="Registre y analice la producción de leche del ganado"
+                            color="rgba(239, 68, 68, 0.18)"
+                        />
+                    <Boton onClick={()=>Navigate('/RegistroProduccion')}>
+                        <div className="imagenPeque">
+                            <img src={imagenP1} alt="plus"/>
+                        </div>
+                        Registro Diario de Litros de Leche por Vaca
+                    </Boton>
+                    <Boton onClick={()=>Navigate('/AnalisisProductivo')}>
+                        <div className="imagenPeque">
+                            <img src={imagenProductivo} alt="productivo"/>
+                        </div>
+                        Identificación de Animales Más Productivos
+                    </Boton>
+                    <Boton onClick={()=>Navigate('/AnalisisRentabilidad')}>
+                        <div className="imagenPeque">
+                            <img src={imagenP2} alt="reload"/>
+                        </div>
+                        Análisis de Rentabilidad
                     </Boton>
                 </Contenedor>
             </div>

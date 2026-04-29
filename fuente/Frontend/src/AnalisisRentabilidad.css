@@ -1,0 +1,102 @@
+.analisisrentabilidad .contenedor {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(1080px, calc(100% - 2rem)) !important;
+}
+
+.analisisrentabilidad {
+    padding-bottom: 2rem;
+}
+
+.rentabilidad-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 1.25rem;
+}
+
+.acciones-analisis {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.resumen-periodo {
+    margin-top: 1.25rem;
+    border: 1px solid #fecaca;
+    background: #fff1f2;
+    color: #991b1b;
+    border-radius: 12px;
+    padding: 0.95rem 1rem;
+    font-weight: 500;
+}
+
+.indicadores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+
+.indicador-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: white;
+    padding: 1rem;
+}
+
+.indicador-label {
+    margin: 0 0 0.45rem;
+    color: #6b7280;
+    font-size: 0.92rem;
+}
+
+.indicador-valor {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.detalle-rentabilidad {
+    margin-top: 1.25rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.detalle-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    background: white;
+}
+
+.detalle-item:last-child {
+    border-bottom: none;
+}
+
+.detalle-label {
+    color: #6b7280;
+}
+
+.detalle-valor {
+    font-weight: 600;
+    text-align: right;
+}
+
+@media (max-width: 900px) {
+    .rentabilidad-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-item {
+        flex-direction: column;
+    }
+
+    .detalle-valor {
+        text-align: left;
+    }
+}

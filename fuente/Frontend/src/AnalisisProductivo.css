@@ -1,0 +1,81 @@
+.analisisproductivo .contenedor {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(1080px, calc(100% - 2rem)) !important;
+}
+
+.analisisproductivo {
+    padding-bottom: 2rem;
+}
+
+.analisis-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 1.25rem;
+}
+
+.acciones-analisis {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.estado-productivo {
+    margin-top: 1.25rem;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    font-weight: 500;
+}
+
+.tabla-productivo {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 0.8fr 1fr;
+    margin-top: 1.25rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.tabla-header {
+    background: #fef2f2;
+    color: #991b1b;
+    font-weight: 600;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #fecaca;
+}
+
+.tabla-cell {
+    padding: 0.95rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    background: white;
+}
+
+.tabla-destacada {
+    font-weight: 600;
+}
+
+.tabla-row-fragment {
+    display: contents;
+}
+
+@media (max-width: 900px) {
+    .analisis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tabla-productivo {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .tabla-header {
+        display: none;
+    }
+
+    .tabla-cell {
+        border-bottom: 1px solid #e5e7eb;
+    }
+}

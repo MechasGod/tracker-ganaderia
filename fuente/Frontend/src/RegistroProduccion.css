@@ -1,0 +1,26 @@
+.registroproduccion .contenedor {
+    margin-left: auto;
+    margin-right: auto;
+    width: min(960px, calc(100% - 2rem)) !important;
+}
+
+.registroproduccion {
+    padding-bottom: 2rem;
+}
+
+.formulario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 1.25rem 0 0.5rem;
+}
+
+.formulario-full {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 860px) {
+    .formulario-grid {
+        grid-template-columns: 1fr;
+    }
+}
