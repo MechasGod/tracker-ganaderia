@@ -51,6 +51,8 @@ const errorMiddleware = (err, req, res, next) => {
     });
   }
 
+  console.error("[INTERNAL_ERROR]", err);
+
   return res.status(500).json({
     success: false,
     error: {

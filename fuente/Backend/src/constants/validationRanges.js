@@ -15,6 +15,14 @@ const VALIDATION_RANGES = {
     min: 0,
     max: 100,
   },
+  PRECIO_LECHE_POR_LITRO: {
+    min: 100,
+    max: 100000,
+  },
+  COSTO_TOTAL_PERIODO: {
+    min: 0,
+    max: 1000000000,
+  },
   CANTIDAD_ALIMENTO_KG_DIA: {
     min: 0.1,
     max: 100,
