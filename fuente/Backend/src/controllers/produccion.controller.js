@@ -246,16 +246,9 @@ const analizarRentabilidad = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!resumen || resumen.totalLitros <= 0) {
-    throw new AppError(
-      "Datos insuficientes para calcular la rentabilidad",
-      400,
-      "BUSINESS_RULE_ERROR"
-    );
-  }
-
-  const totalLitros = Number(resumen.totalLitros.toFixed(2));
-  const animalesEnProduccion = resumen.animales.length;
+  const totalLitros = resumen ? Number(resumen.totalLitros.toFixed(2)) : 0;
+  const animalesEnProduccion = resumen ? resumen.animales.length : 0;
+  const cantidadRegistros = resumen ? resumen.cantidadRegistros : 0;
   const ingresoBruto = Number((totalLitros * precioPorLitro).toFixed(2));
   const utilidadNeta = Number((ingresoBruto - costoTotal).toFixed(2));
   const margenRentabilidad = ingresoBruto === 0
@@ -273,7 +266,7 @@ const analizarRentabilidad = asyncHandler(async (req, res) => {
         fechaFin: req.body.fechaFin,
       },
       totalLitros,
-      cantidadRegistros: resumen.cantidadRegistros,
+      cantidadRegistros,
       animalesEnProduccion,
       precioPorLitro,
       costoTotal,
