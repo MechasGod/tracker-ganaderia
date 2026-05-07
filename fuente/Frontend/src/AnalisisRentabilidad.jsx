@@ -17,6 +17,11 @@ const currencyFormatter = new Intl.NumberFormat('es-CO', {
     maximumFractionDigits: 2,
 })
 
+const formatFecha = (str) => {
+    const s = String(str || '').substring(0, 10)
+    return s ? new Date(s + 'T12:00:00').toLocaleDateString('es-CO') : ''
+}
+
 function AnalisisRentabilidad() {
     const [toast, setToast] = useState(null)
     const [cargando, setCargando] = useState(false)
@@ -160,7 +165,7 @@ function AnalisisRentabilidad() {
                 {resultado ? (
                     <>
                         <div className="resumen-periodo">
-                            Periodo analizado: {new Date(resultado.periodo.fechaInicio).toLocaleDateString('es-CO')} - {new Date(resultado.periodo.fechaFin).toLocaleDateString('es-CO')}
+                            Periodo analizado: {formatFecha(resultado.periodo.fechaInicio)} - {formatFecha(resultado.periodo.fechaFin)}
                         </div>
 
                         <div className="indicadores-grid">

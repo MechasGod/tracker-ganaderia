@@ -11,6 +11,11 @@ import './AnalisisProductivo.css'
 import { get } from './api.js'
 import { isFutureDate } from './formValidation.js'
 
+const formatFecha = (str) => {
+    const s = String(str || '').substring(0, 10)
+    return s ? new Date(s + 'T12:00:00').toLocaleDateString('es-CO') : ''
+}
+
 function AnalisisProductivo() {
     const [toast, setToast] = useState(null)
     const [cargando, setCargando] = useState(false)
@@ -142,7 +147,7 @@ function AnalisisProductivo() {
                                     {animal.cantidadRegistros}
                                 </div>
                                 <div className="tabla-cell" key={`${animal.animalId}-fecha`}>
-                                    {new Date(animal.ultimaFechaRegistro).toLocaleDateString('es-CO')}
+                                    {formatFecha(animal.ultimaFechaRegistro)}
                                 </div>
                             </div>
                         ))}

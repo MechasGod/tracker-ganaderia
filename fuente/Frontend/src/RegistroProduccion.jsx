@@ -31,7 +31,7 @@ function RegistroProduccion() {
     useEffect(() => {
         const cargarAnimales = async () => {
             try {
-                const res = await get('/animales', { sexo: 'hembra', estado: 'activo', limit: 100 })
+                const res = await get('/animales', { estado: 'activo', limit: 200 })
                 setAnimales(res.data)
             } catch {
                 setToast({
