@@ -11,16 +11,34 @@ const login = asyncHandler(async (req, res) => {
   const email = (req.body.email || "").trim().toLowerCase();
   const password = req.body.password || "";
 
+  console.log("[LOGIN] intento:", email);
+
   if (!email || !password) {
     throw new AppError("Email y password son obligatorios", 400, "VALIDATION_ERROR");
   }
 
-  const user = await Usuario.findOne({ email }).select("+password");
+  let user;
+  try {
+    user = await Usuario.findOne({ email }).select("+password");
+    console.log("[LOGIN] usuario encontrado:", !!user);
+  } catch (dbErr) {
+    console.error("[LOGIN] error en findOne:", dbErr);
+    throw dbErr;
+  }
+
   if (!user) {
     throw new AppError("Credenciales inválidas", 401, "INVALID_CREDENTIALS");
   }
 
-  const validPassword = await bcrypt.compare(password, user.password);
+  let validPassword;
+  try {
+    validPassword = await bcrypt.compare(password, user.password);
+    console.log("[LOGIN] password valido:", validPassword);
+  } catch (bcryptErr) {
+    console.error("[LOGIN] error en bcrypt:", bcryptErr);
+    throw bcryptErr;
+  }
+
   if (!validPassword) {
     throw new AppError("Credenciales inválidas", 401, "INVALID_CREDENTIALS");
   }
